@@ -1,7 +1,9 @@
 package view;
 
-/**
- * Created by yura on 10/1/16.
- */
-public class GameObjectView {
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
+
+public abstract class GameObjectView {
+    public abstract BufferedImage getObjectImage();
 }
