@@ -1,6 +1,6 @@
 package view;
 
-import colission.PlayerObstacleColission;
+import collision.PlayerObstacleCollision;
 import com.golden.gamedev.Game;
 import com.golden.gamedev.object.CollisionManager;
 import com.golden.gamedev.object.SpriteGroup;
@@ -40,7 +40,7 @@ public class GameView extends Game {
             e.printStackTrace();
         }
 
-        collision = new PlayerObstacleColission();
+        collision = new PlayerObstacleCollision();
 
         playerGroup = new SpriteGroup("Player Group");
 

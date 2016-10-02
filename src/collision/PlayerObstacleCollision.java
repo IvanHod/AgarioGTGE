@@ -1,12 +1,12 @@
-package colission;
+package collision;
 
 
 import com.golden.gamedev.object.Sprite;
 import com.golden.gamedev.object.collision.BasicCollisionGroup;
 
-public class PlayerObstacleColission extends BasicCollisionGroup {
+public class PlayerObstacleCollision extends BasicCollisionGroup {
 
-    public PlayerObstacleColission() {
+    public PlayerObstacleCollision() {
         pixelPerfectCollision = true;
     }
 
