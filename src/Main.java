@@ -1,4 +1,6 @@
 import com.golden.gamedev.GameLoader;
+import game.model.GameModel;
+import view.GameView;
 
 import java.awt.*;
 
@@ -6,9 +8,9 @@ import java.awt.*;
 public class Main {
 
     public static void main(String[] args) {
-        GameApplication gameApplication = new GameApplication();
-        GameLoader loader = new GameLoader();
-        loader.setup(gameApplication, new Dimension(1280, 720), false);
-        loader.start();
+        GameLoader game = new GameLoader();
+        GameView gw = new GameView();
+        game.setup(gw, gw.dimension(), false);
+        game.start();
     }
 }
