@@ -14,6 +14,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ObstacleFactory extends GameObjectFactory {
 
+    int randomX;
+    int randomY;
+
     @Override
     public GameObject createGameObject() {
         ObstacleSprite obstacleSprite = null;
@@ -22,9 +25,9 @@ public class ObstacleFactory extends GameObjectFactory {
 
         obstacleSprite = new ObstacleSprite((ObstacleView) gameObjectViewFactory.createGameObjectView());
 
-        int randomX = ThreadLocalRandom.current().nextInt(20, (int) GameView.dimension().getWidth());
-        int randomY = ThreadLocalRandom.current().nextInt(20, (int) GameView.dimension().getHeight());
-
+        randomX = ThreadLocalRandom.current().nextInt(20, (int) GameView.viewport().getWidth());
+        randomY = ThreadLocalRandom.current().nextInt(20, (int) GameView.viewport().getHeight());
+        
         obstacleSprite.setX(randomX);
         obstacleSprite.setY(randomY);
 

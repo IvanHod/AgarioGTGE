@@ -97,8 +97,8 @@ public class GameView extends Game {
         return new Dimension(1280, 720);
     }
 
-    public Dimension viewport() {
-        return new Dimension(5000, 5000);
+    public static Dimension viewport() {
+        return new Dimension(3000, 3000);
     }
 
     public Point mousePosition() {

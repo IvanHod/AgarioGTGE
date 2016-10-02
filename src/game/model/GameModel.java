@@ -16,7 +16,7 @@ import java.io.IOException;
 
 public class GameModel {
 
-    private final int MAX_OBSTACLES_COUNT = 10;
+    private final int MAX_OBSTACLES_COUNT = 50;
 
 
     GameObjectFactory playerBacteriaFactory = new PlayerBacteriaFactory();
