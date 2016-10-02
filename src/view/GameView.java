@@ -1,68 +1,99 @@
 package view;
 
+import colission.PlayerObstacleColission;
 import com.golden.gamedev.Game;
-import dish.model.Dish;
+import com.golden.gamedev.object.CollisionManager;
+import com.golden.gamedev.object.SpriteGroup;
+import com.golden.gamedev.object.background.ImageBackground;
 import game.model.GameModel;
+import gameobject.model.Obstacle;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 
 
 public class GameView extends Game {
 
-    Dish dish;
+    private final String DISH_BACKGROUND_IMAGE_PATH = "assets/bg/bg.png";
+
+    ImageBackground bg;
 
     GameModel gm;
+
+    SpriteGroup playerGroup;
+
+    SpriteGroup obstacleGroup;
+
+    CollisionManager collision;
 
     @Override
     public void initResources() {
 
         try {
-
             gm = new GameModel();
 
-            dish = new Dish(new DishView());
+            this.bg = new ImageBackground(ImageIO.read(new File(DISH_BACKGROUND_IMAGE_PATH)));
 
         } catch (IOException e) {
-
             e.printStackTrace();
-
         }
 
-        dish.background().setClip(0, 0, (int) dimension().getWidth(),(int) dimension().getHeight());
+        collision = new PlayerObstacleColission();
 
-        gm.getPlayerBacteria()
-                .sprite()
-                .setBackground(dish.background());
+        playerGroup = new SpriteGroup("Player Group");
 
-        gm.getPlayerBacteria()
-                .setSpeed(0.3);
+        obstacleGroup = new SpriteGroup("Obstacle Group");
 
-        gm.getPlayerBacteria()
-                .setPosition(new Point((int) (dimension().getWidth() / 2),
+
+        bg.setClip(0, 0, (int) dimension().getWidth(),(int) dimension().getHeight());
+
+        playerGroup.add(gm.dish().getPlayerBacteria().sprite());
+
+        playerGroup.setBackground(bg);
+
+        for (Obstacle obstacle : gm.dish().getObstacles()) {
+            obstacleGroup.add(obstacle.sprite());
+        }
+
+        obstacleGroup.setBackground(bg);
+
+        collision.setCollisionGroup(playerGroup, obstacleGroup);
+
+
+
+
+        gm.dish().getPlayerBacteria().setSpeed(0.3);
+
+        gm.dish().getPlayerBacteria()
+                    .setPosition(new Point((int) (dimension().getWidth() / 2),
                         (int) (dimension().getHeight() / 2)));
 
     }
 
     @Override
-    public void update(long l) {
-        dish.background().update(l);
-        gm.getPlayerBacteria().sprite().update(l);
-        gm.update(mousePosition());
-    }
+    public void update(long elapsedTime) {
+        bg.update(elapsedTime);
+        obstacleGroup.update(elapsedTime);
+        playerGroup.update(elapsedTime);
 
+        gm.update(mousePosition());
+
+        collision.checkCollision();
+    }
 
     @Override
     public void render(Graphics2D g) {
-        dish.background().render(g);
-        gm.getPlayerBacteria().sprite().render(g);
+        bg.render(g);
+        obstacleGroup.render(g);
+        playerGroup.render(g);
 
-        dish.background()
-                .setToCenter(gm.getPlayerBacteria().sprite());
+        bg.setToCenter(gm.dish().getPlayerBacteria().sprite());
     }
 
 
-    public Dimension dimension() {
+    public static Dimension dimension() {
         return new Dimension(1280, 720);
     }
 
@@ -72,8 +103,8 @@ public class GameView extends Game {
 
     public Point mousePosition() {
         Point p = new Point(this.getMouseX(), this.getMouseY());
-        p.x += dish.background().getX();
-        p.y += dish.background().getY();
+        p.x += bg.getX();
+        p.y += bg.getY();
         return p;
     }
 

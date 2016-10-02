@@ -1,19 +1,37 @@
 package dish.model;
 
-import com.golden.gamedev.object.background.ImageBackground;
-import view.DishView;
+
+
+import gameobject.model.GameObject;
+import gameobject.model.Obstacle;
+import gameobject.model.PlayerBacteria;
+import sprite.PlayerBacteriaSprite;
+
+import java.util.ArrayList;
 
 
 public class Dish {
 
-    ImageBackground imageBackground;
+    PlayerBacteria playerBacteria;
 
-    public Dish(DishView dishView) {
-        this.imageBackground = dishView.getBackground();
+    ArrayList<Obstacle> obstacles = new ArrayList<>();
+
+
+    public void addObstacle(Obstacle obstacle) {
+        obstacles.add(obstacle);
     }
 
-    public ImageBackground background() {
-        return imageBackground;
+    public ArrayList<Obstacle> getObstacles() {
+        return obstacles;
     }
+
+    public void addPlayerBacteria(PlayerBacteria playerBacteria) {
+        this.playerBacteria = playerBacteria;
+    }
+
+    public PlayerBacteria getPlayerBacteria() {
+        return playerBacteria;
+    }
+
 
 }

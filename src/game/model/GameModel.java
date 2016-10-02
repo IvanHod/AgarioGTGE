@@ -1,14 +1,13 @@
 package game.model;
 
-import com.golden.gamedev.object.SpriteGroup;
 import controller.PlayerBacteriaController;
 import dish.model.Dish;
 import factory.GameObjectFactory;
-import factory.PlayerBacteriaFactory;
+import factory.model.ObstacleFactory;
+import factory.model.PlayerBacteriaFactory;
+import gameobject.model.GameObject;
+import gameobject.model.Obstacle;
 import gameobject.model.PlayerBacteria;
-import sprite.PlayerSprite;
-import view.DishView;
-import view.GameView;
 
 
 import java.awt.*;
@@ -17,30 +16,40 @@ import java.io.IOException;
 
 public class GameModel {
 
-    GameObjectFactory gameObjectFactory;
+    private final int MAX_OBSTACLES_COUNT = 10;
 
-    PlayerBacteria playerBacteria;
+
+    GameObjectFactory playerBacteriaFactory = new PlayerBacteriaFactory();
+
+    GameObjectFactory obstacleFactory = new ObstacleFactory();
 
     PlayerBacteriaController playerBacteriaController;
 
-    SpriteGroup playerSpriteGroup;
+    Dish dish;
 
     public GameModel() throws IOException {
 
-        gameObjectFactory = new PlayerBacteriaFactory();
+        dish = new Dish();
 
-        playerBacteria = (PlayerBacteria) gameObjectFactory.createGameObject();
+        PlayerBacteria playerBacteria = (PlayerBacteria) playerBacteriaFactory.createGameObject();
 
         playerBacteriaController = new PlayerBacteriaController(playerBacteria);
 
+        dish.addPlayerBacteria(playerBacteria);
+
+        for (int i = 0; i < MAX_OBSTACLES_COUNT; i++) {
+            dish.addObstacle((Obstacle) obstacleFactory.createGameObject());
+        }
 
     }
 
-    public void update(Point p) {
-        playerBacteriaController.update(p);
+    public void update(Point mousePosition) {
+        playerBacteriaController.update(mousePosition);
     }
 
-    public PlayerBacteria getPlayerBacteria() {
-        return playerBacteria;
+
+    public Dish dish() {
+        return dish;
     }
+
 }

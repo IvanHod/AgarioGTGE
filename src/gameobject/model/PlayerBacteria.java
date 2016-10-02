@@ -1,48 +1,45 @@
 package gameobject.model;
 
-import sprite.PlayerSprite;
+import sprite.PlayerBacteriaSprite;
 import utils.GameMath;
 
 import java.awt.*;
 
-/**
- * Created by yura on 10/2/16.
- */
-public class PlayerBacteria extends GameObject {
+public class PlayerBacteria extends GameObject implements MovableGameObject {
 
     int angle = 0;
 
     double speed = 0;
 
-    PlayerSprite playerSprite;
+    PlayerBacteriaSprite playerBacteriaSprite;
 
-    public PlayerBacteria(PlayerSprite playerSprite) {
-        this.playerSprite = playerSprite;
+    public PlayerBacteria(PlayerBacteriaSprite playerBacteriaSprite) {
+        this.playerBacteriaSprite = playerBacteriaSprite;
     }
 
-    public PlayerSprite sprite() {
-        return playerSprite;
+    public PlayerBacteriaSprite sprite() {
+        return playerBacteriaSprite;
     }
 
     @Override
     public void setPosition(Point position) {
-        this.playerSprite.setX(position.getX() - 1 / 2);
-        this.playerSprite.setY(position.getY() - 1 / 2);
+        this.playerBacteriaSprite.setX(position.getX() - 1 / 2);
+        this.playerBacteriaSprite.setY(position.getY() - 1 / 2);
     }
 
     @Override
     public Point getPosition() {
         Point position = new Point();
-        position.x = (int) (playerSprite.getX());
-        position.y = (int) (playerSprite.getY());
+        position.x = (int) (playerBacteriaSprite.getX());
+        position.y = (int) (playerBacteriaSprite.getY());
         return position;
     }
 
     @Override
     public void setSpeed(double speed) {
         this.speed = speed;
-        playerSprite.setHorizontalSpeed(speed * Math.cos(GameMath.degreesToRadians(angle)));
-        playerSprite.setVerticalSpeed(speed * Math.sin(GameMath.degreesToRadians(angle)));
+        playerBacteriaSprite.setHorizontalSpeed(speed * Math.cos(GameMath.degreesToRadians(angle)));
+        playerBacteriaSprite.setVerticalSpeed(speed * Math.sin(GameMath.degreesToRadians(angle)));
     }
 
     @Override
@@ -54,8 +51,8 @@ public class PlayerBacteria extends GameObject {
     @Override
     public void setDirection(int angle) {
         this.angle = angle;
-        playerSprite.setHorizontalSpeed(speed * Math.cos(GameMath.degreesToRadians(angle)));
-        playerSprite.setVerticalSpeed(speed * Math.sin(GameMath.degreesToRadians(angle)));
+        playerBacteriaSprite.setHorizontalSpeed(speed * Math.cos(GameMath.degreesToRadians(angle)));
+        playerBacteriaSprite.setVerticalSpeed(speed * Math.sin(GameMath.degreesToRadians(angle)));
     }
 
     @Override
