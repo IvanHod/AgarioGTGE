@@ -3,8 +3,10 @@ package game.model;
 import controller.PlayerBacteriaController;
 import dish.model.Dish;
 import factory.GameObjectFactory;
+import factory.model.AgarFactory;
 import factory.model.ObstacleFactory;
 import factory.model.PlayerBacteriaFactory;
+import gameobject.model.Agar;
 import gameobject.model.GameObject;
 import gameobject.model.Obstacle;
 import gameobject.model.PlayerBacteria;
@@ -12,20 +14,32 @@ import gameobject.model.PlayerBacteria;
 
 import java.awt.*;
 import java.io.IOException;
+import java.sql.Time;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class GameModel {
 
-    private final int MAX_OBSTACLES_COUNT = 50;
+    private final int MAX_OBSTACLES_COUNT = 20;
+
+    private final int MAX_AGAR_COUNT = 200;
 
 
     GameObjectFactory playerBacteriaFactory = new PlayerBacteriaFactory();
 
     GameObjectFactory obstacleFactory = new ObstacleFactory();
 
+    GameObjectFactory agarFactory = new AgarFactory();
+
     PlayerBacteriaController playerBacteriaController;
 
     Dish dish;
+
 
     public GameModel() throws IOException {
 
@@ -41,6 +55,10 @@ public class GameModel {
             dish.addObstacle((Obstacle) obstacleFactory.createGameObject());
         }
 
+        for (int i = 0; i < MAX_AGAR_COUNT; i++) {
+            dish.addAgar((Agar) agarFactory.createGameObject());
+        }
+
     }
 
     public void update(Point mousePosition) {
@@ -51,5 +69,6 @@ public class GameModel {
     public Dish dish() {
         return dish;
     }
+
 
 }
