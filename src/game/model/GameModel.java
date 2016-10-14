@@ -7,28 +7,29 @@ import factory.model.AgarFactory;
 import factory.model.ObstacleFactory;
 import factory.model.PlayerBacteriaFactory;
 import gameobject.model.Agar;
-import gameobject.model.GameObject;
 import gameobject.model.Obstacle;
 import gameobject.model.PlayerBacteria;
+import listeners.AgarEatenListener;
+import listeners.RevealAgarListener;
 
 
 import java.awt.*;
 import java.io.IOException;
-import java.sql.Time;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.Executor;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-public class GameModel {
+public class GameModel implements AgarEatenListener{
 
-    private final int MAX_OBSTACLES_COUNT = 20;
+    private final int MAX_OBSTACLES_COUNT = 50;
 
     private final int MAX_AGAR_COUNT = 200;
 
+    private int agarEatenCount = 0;
+
+    private ArrayList<RevealAgarListener> revealAgarListeners = new ArrayList<>();
 
     GameObjectFactory playerBacteriaFactory = new PlayerBacteriaFactory();
 
@@ -40,10 +41,9 @@ public class GameModel {
 
     Dish dish;
 
+    public GameModel(Dish dish) throws IOException {
 
-    public GameModel() throws IOException {
-
-        dish = new Dish();
+        this.dish = dish;
 
         PlayerBacteria playerBacteria = (PlayerBacteria) playerBacteriaFactory.createGameObject();
 
@@ -55,20 +55,48 @@ public class GameModel {
             dish.addObstacle((Obstacle) obstacleFactory.createGameObject());
         }
 
-        for (int i = 0; i < MAX_AGAR_COUNT; i++) {
-            dish.addAgar((Agar) agarFactory.createGameObject());
+        for(int i = 0; i < MAX_AGAR_COUNT; i++) {
+            dish.addAgar(((Agar) agarFactory.createGameObject()));
         }
 
+        fireRevealAgar();
     }
 
     public void update(Point mousePosition) {
+
         playerBacteriaController.update(mousePosition);
     }
 
+    private void fireRevealAgar() {
 
-    public Dish dish() {
-        return dish;
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(new Runnable() {
+
+            int agarRevealedCount;
+
+            @Override
+            public void run() {
+
+                for (RevealAgarListener l : revealAgarListeners) {
+                    l.revealAgar();
+                }
+
+                agarRevealedCount += 10;
+
+                if(agarRevealedCount == MAX_AGAR_COUNT) {
+                    exec.shutdown();
+                }
+            }
+        }, 1, 3, TimeUnit.SECONDS);
     }
 
+    public void addAgargeneratedListener(RevealAgarListener revealAgarListener) {
+        revealAgarListeners.add(revealAgarListener);
+    }
 
+    @Override
+    public void agarEaten() {
+        agarEatenCount++;
+    }
 }
+

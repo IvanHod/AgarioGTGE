@@ -24,15 +24,18 @@ public class Dish {
         obstacles.add(obstacle);
     }
 
-    public ArrayList<Obstacle> getObstacles() {
+    public ArrayList<Obstacle> obstacles() {
+
         return obstacles;
     }
 
     public void addAgar(Agar agar) {
+
         agars.add(agar);
     }
 
-    public ArrayList<Agar> getAgars() {
+    public ArrayList<Agar> agar() {
+
         return agars;
     }
 
@@ -41,7 +44,7 @@ public class Dish {
         this.playerBacteria = playerBacteria;
     }
 
-    public PlayerBacteria getPlayerBacteria() {
+    public PlayerBacteria playerBacteria() {
 
         return playerBacteria;
     }

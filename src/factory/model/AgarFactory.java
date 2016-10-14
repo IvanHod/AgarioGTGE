@@ -5,19 +5,15 @@ import factory.GameObjectViewFactory;
 import factory.view.AgarViewFactory;
 import gameobject.model.Agar;
 import gameobject.model.GameObject;
-import gameobject.model.Obstacle;
 import sprite.AgarSprite;
+import utils.PositionRandomizer;
 import view.AgarView;
-import view.GameView;
 
-import java.util.concurrent.ThreadLocalRandom;
-
+import java.awt.*;
 
 public class AgarFactory extends GameObjectFactory {
 
-    int randomX;
-
-    int randomY;
+    Point position;
 
     @Override
     public GameObject createGameObject() {
@@ -28,16 +24,10 @@ public class AgarFactory extends GameObjectFactory {
 
         agarSprite = new AgarSprite((AgarView) gameObjectViewFactory.createGameObjectView());
 
-        randomX = ThreadLocalRandom.current().nextInt(20, (int) GameView.viewport().getWidth());
-        randomY = ThreadLocalRandom.current().nextInt(20, (int) GameView.viewport().getHeight());
+        position = PositionRandomizer.getRandomPosition();
 
-        if(randomX == GameView.initialPlayerPosition.x)
-            randomX += 100;
-        if(randomY == GameView.initialPlayerPosition.y)
-            randomY -= 100;
-
-        agarSprite.setX(randomX);
-        agarSprite.setY(randomY);
+        agarSprite.setX(position.x);
+        agarSprite.setY(position.y);
 
         return new Agar(agarSprite);
     }

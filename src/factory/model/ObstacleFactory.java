@@ -7,16 +7,14 @@ import factory.view.ObstacleViewFactory;
 import gameobject.model.GameObject;
 import gameobject.model.Obstacle;
 import sprite.ObstacleSprite;
-import view.GameView;
+import utils.PositionRandomizer;
 import view.ObstacleView;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.awt.*;
 
 public class ObstacleFactory extends GameObjectFactory {
 
-    int randomX;
-
-    int randomY;
+    Point position;
 
     @Override
     public GameObject createGameObject() {
@@ -26,16 +24,10 @@ public class ObstacleFactory extends GameObjectFactory {
 
         obstacleSprite = new ObstacleSprite((ObstacleView) gameObjectViewFactory.createGameObjectView());
 
-        randomX = ThreadLocalRandom.current().nextInt(20, (int) GameView.viewport().getWidth());
-        randomY = ThreadLocalRandom.current().nextInt(20, (int) GameView.viewport().getHeight());
+        position = PositionRandomizer.getRandomPosition();
 
-        if(randomX == GameView.initialPlayerPosition.x)
-            randomX += 100;
-        if(randomY == GameView.initialPlayerPosition.y)
-            randomY -= 100;
-
-        obstacleSprite.setX(randomX);
-        obstacleSprite.setY(randomY);
+        obstacleSprite.setX(position.x);
+        obstacleSprite.setY(position.y);
 
         return new Obstacle(obstacleSprite);
     }

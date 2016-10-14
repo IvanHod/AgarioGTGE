@@ -3,13 +3,15 @@ package view;
 import collision.PlayerAgarCollision;
 import collision.PlayerObstacleCollision;
 import com.golden.gamedev.Game;
-import com.golden.gamedev.object.CollisionManager;
+import com.golden.gamedev.object.PlayField;
+import com.golden.gamedev.object.Sprite;
 import com.golden.gamedev.object.SpriteGroup;
 import com.golden.gamedev.object.background.ImageBackground;
+import dish.model.Dish;
 import game.model.GameModel;
 import gameobject.model.Agar;
 import gameobject.model.Obstacle;
-import sprite.AgarSpriteGroup;
+import listeners.RevealAgarListener;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -17,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 
-public class GameView extends Game {
+public class GameView extends Game implements RevealAgarListener {
 
     private final String DISH_BACKGROUND_IMAGE_PATH = "assets/bg/bg.png";
 
@@ -26,109 +28,109 @@ public class GameView extends Game {
 
     ImageBackground bg;
 
+    PlayField pf;
+
     GameModel gm;
 
-    SpriteGroup playerGroup;
+    Dish dish;
 
-    SpriteGroup obstacleGroup;
+    SpriteGroup playerGroup, obstacleGroup, agarGroup;
 
-    SpriteGroup agarGroup;
-
-    CollisionManager playerObstacleCollision;
-
-    CollisionManager playerAgarCollision;
 
     @Override
     public void initResources() {
 
         try {
-            gm = new GameModel();
+
+            this.dish = new Dish();
+
+            this.gm = new GameModel(this.dish);
+
+            gm.addAgargeneratedListener(this);
 
             this.bg = new ImageBackground(ImageIO.read(new File(DISH_BACKGROUND_IMAGE_PATH)));
 
-        } catch (IOException e) {
+            this.bg.setClip(0, 0, (int) dimension().getWidth(),(int) dimension().getHeight());
+
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 
-        playerObstacleCollision = new PlayerObstacleCollision();
+        pf = new PlayField(bg);
 
-        playerAgarCollision = new PlayerAgarCollision();
+        playerGroup = pf.addGroup(new SpriteGroup("Player Group"));
 
-        playerGroup = new SpriteGroup("Player Group");
+        obstacleGroup = pf.addGroup(new SpriteGroup("Obstacle Group"));
 
-        obstacleGroup = new SpriteGroup("Obstacle Group");
+        agarGroup = pf.addGroup((new SpriteGroup("Agar Group")));
 
-        agarGroup = new AgarSpriteGroup("Agar Group");
+        playerGroup.add(dish.playerBacteria().sprite());
 
-        bg.setClip(0, 0, (int) dimension().getWidth(),(int) dimension().getHeight());
-
-        playerGroup.add(gm.dish().getPlayerBacteria().sprite());
-
-        playerGroup.setBackground(bg);
-
-        for (Obstacle obstacle : gm.dish().getObstacles()) {
+        for (Obstacle obstacle : dish.obstacles()) {
             obstacleGroup.add(obstacle.sprite());
         }
 
-        obstacleGroup.setBackground(bg);
-
-        for(Agar agar : gm.dish().getAgars()) {
+        for (Agar agar : dish.agar()) {
             agar.sprite().setActive(false);
             agarGroup.add(agar.sprite());
         }
 
-        agarGroup.setBackground(bg);
+        pf.addCollisionGroup(playerGroup, obstacleGroup, new PlayerObstacleCollision());
 
-        playerObstacleCollision.setCollisionGroup(playerGroup, obstacleGroup);
+        pf.addCollisionGroup(playerGroup, agarGroup, new PlayerAgarCollision());
 
-        playerAgarCollision.setCollisionGroup(playerGroup, agarGroup);
+        dish.playerBacteria().setSpeed(0.3);
 
-
-        gm.dish().getPlayerBacteria().setSpeed(0.3);
-
-        gm.dish().getPlayerBacteria()
-                    .setPosition(initialPlayerPosition);
+        dish.playerBacteria().setPosition(initialPlayerPosition);
 
     }
 
     @Override
     public void update(long elapsedTime) {
-        bg.update(elapsedTime);
-        obstacleGroup.update(elapsedTime);
-        playerGroup.update(elapsedTime);
-        agarGroup.update(elapsedTime);
-
+        pf.update(elapsedTime);
         gm.update(mousePosition());
-
-
-        playerObstacleCollision.checkCollision();
-        playerAgarCollision.checkCollision();
     }
 
     @Override
     public void render(Graphics2D g) {
-        bg.render(g);
-        obstacleGroup.render(g);
-        playerGroup.render(g);
-        agarGroup.render(g);
-
-        bg.setToCenter(gm.dish().getPlayerBacteria().sprite());
+        pf.render(g);
+        bg.setToCenter(dish.playerBacteria().sprite());
     }
 
 
     public static Dimension dimension() {
+
         return new Dimension(1280, 720);
     }
 
     public static Dimension viewport() {
+
         return new Dimension(3000, 3000);
     }
 
-    public Point mousePosition() {
+    private Point mousePosition() {
         Point p = new Point(this.getMouseX(), this.getMouseY());
         p.x += bg.getX();
         p.y += bg.getY();
         return p;
     }
 
+    @Override
+    public void revealAgar() {
+
+        int revealedAgar = 0;
+
+        for (Sprite agarSprite : agarGroup.getSprites()) {
+            if(!agarSprite.isActive()) {
+                agarSprite.setActive(true);
+                revealedAgar++;
+            }
+
+            if(revealedAgar == 10){
+                break;
+            }
+
+        }
+    }
 }
