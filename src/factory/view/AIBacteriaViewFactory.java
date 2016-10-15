@@ -1,17 +1,17 @@
 package factory.view;
 
+
 import factory.GameObjectViewFactory;
+import view.AIBacteriaView;
 import view.GameObjectView;
-import view.ObstacleView;
 
 import java.io.IOException;
 
-public class ObstacleViewFactory extends GameObjectViewFactory {
-
+public class AIBacteriaViewFactory extends GameObjectViewFactory {
     @Override
     public GameObjectView createGameObjectView() {
         try {
-            return new ObstacleView();
+            return new AIBacteriaView();
         } catch (IOException e) {
             e.printStackTrace();
         }

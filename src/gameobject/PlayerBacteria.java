@@ -1,4 +1,4 @@
-package gameobject.model;
+package gameobject;
 
 import sprite.PlayerBacteriaSprite;
 import utils.GameMath;
@@ -7,9 +7,9 @@ import java.awt.*;
 
 public class PlayerBacteria extends GameObject implements MovableGameObject {
 
-    int angle = 0;
+    int angle;
 
-    double speed = 0;
+    double speed;
 
     PlayerBacteriaSprite playerBacteriaSprite;
 

@@ -9,9 +9,9 @@ import java.io.IOException;
 public class AgarView extends GameObjectView {
 
 
-    private final String AGAR_SPRITE_IMAGE_PATH = "assets/sprites/agar/agar.png";
+    final String AGAR_SPRITE_IMAGE_PATH = "assets/sprites/agar/agar.png";
 
-    private BufferedImage agarImage;
+    BufferedImage agarImage;
 
     public AgarView() throws IOException {
 

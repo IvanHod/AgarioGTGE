@@ -1,4 +1,4 @@
-package gameobject.model;
+package gameobject;
 
 
 import com.golden.gamedev.object.Sprite;

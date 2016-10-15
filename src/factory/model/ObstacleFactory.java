@@ -4,8 +4,8 @@ package factory.model;
 import factory.GameObjectFactory;
 import factory.GameObjectViewFactory;
 import factory.view.ObstacleViewFactory;
-import gameobject.model.GameObject;
-import gameobject.model.Obstacle;
+import gameobject.GameObject;
+import gameobject.Obstacle;
 import sprite.ObstacleSprite;
 import utils.PositionRandomizer;
 import view.ObstacleView;
@@ -18,7 +18,7 @@ public class ObstacleFactory extends GameObjectFactory {
 
     @Override
     public GameObject createGameObject() {
-        ObstacleSprite obstacleSprite = null;
+        ObstacleSprite obstacleSprite;
 
         GameObjectViewFactory gameObjectViewFactory = new ObstacleViewFactory();
 

@@ -1,7 +1,6 @@
 package factory;
 
-import gameobject.model.GameObject;
-import gameobject.model.MovableGameObject;
+import gameobject.GameObject;
 
 public abstract class GameObjectFactory {
     public abstract GameObject createGameObject();

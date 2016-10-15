@@ -1,12 +1,11 @@
-package dish.model;
+package gamemodel;
 
 
 
-import gameobject.model.Agar;
-import gameobject.model.GameObject;
-import gameobject.model.Obstacle;
-import gameobject.model.PlayerBacteria;
-import sprite.PlayerBacteriaSprite;
+import gameobject.AIBacteria;
+import gameobject.Agar;
+import gameobject.Obstacle;
+import gameobject.PlayerBacteria;
 
 import java.util.ArrayList;
 
@@ -18,6 +17,8 @@ public class Dish {
     ArrayList<Obstacle> obstacles = new ArrayList<>();
 
     ArrayList<Agar> agars = new ArrayList<>();
+
+    ArrayList<AIBacteria> aiBacterias = new ArrayList<>();
 
     public void addObstacle(Obstacle obstacle) {
 
@@ -47,6 +48,14 @@ public class Dish {
     public PlayerBacteria playerBacteria() {
 
         return playerBacteria;
+    }
+
+    public void addAiBacteria(AIBacteria aiBacteria){
+        aiBacterias.add(aiBacteria);
+    }
+
+    public ArrayList<AIBacteria> aiBacterias() {
+        return aiBacterias;
     }
 
 

@@ -1,9 +1,7 @@
 package controller;
 
-import game.model.GameModel;
-import gameobject.model.PlayerBacteria;
+import gameobject.PlayerBacteria;
 import utils.GameMath;
-import view.GameView;
 
 import java.awt.*;
 

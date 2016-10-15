@@ -1,7 +1,6 @@
 package sprite;
 
 import com.golden.gamedev.object.Sprite;
-import gameobject.model.Obstacle;
 import view.ObstacleView;
 
 

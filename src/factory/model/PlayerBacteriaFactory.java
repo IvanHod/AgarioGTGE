@@ -3,8 +3,8 @@ package factory.model;
 import factory.GameObjectFactory;
 import factory.GameObjectViewFactory;
 import factory.view.PlayerBacteriaViewFactory;
-import gameobject.model.GameObject;
-import gameobject.model.PlayerBacteria;
+import gameobject.GameObject;
+import gameobject.PlayerBacteria;
 import sprite.PlayerBacteriaSprite;
 import view.PlayerBacteriaView;
 

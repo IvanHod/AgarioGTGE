@@ -3,8 +3,8 @@ package factory.model;
 import factory.GameObjectFactory;
 import factory.GameObjectViewFactory;
 import factory.view.AgarViewFactory;
-import gameobject.model.Agar;
-import gameobject.model.GameObject;
+import gameobject.Agar;
+import gameobject.GameObject;
 import sprite.AgarSprite;
 import utils.PositionRandomizer;
 import view.AgarView;
@@ -18,7 +18,7 @@ public class AgarFactory extends GameObjectFactory {
     @Override
     public GameObject createGameObject() {
 
-        AgarSprite agarSprite = null;
+        AgarSprite agarSprite;
 
         GameObjectViewFactory gameObjectViewFactory = new AgarViewFactory();
 

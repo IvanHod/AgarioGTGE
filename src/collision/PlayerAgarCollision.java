@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class PlayerAgarCollision extends BasicCollisionGroup {
 
 
-    private ArrayList<AgarEatenListener> agarEatenListeners = new ArrayList<>();
+    ArrayList<AgarEatenListener> agarEatenListeners = new ArrayList<>();
 
     public PlayerAgarCollision() {
         pixelPerfectCollision = true;

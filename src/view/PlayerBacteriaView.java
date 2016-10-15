@@ -8,9 +8,9 @@ import java.io.IOException;
 
 public class PlayerBacteriaView extends GameObjectView {
 
-    private final String PLAYER_SPRITE_IMAGE_PATH = "assets/sprites/player/cell.png";
+    final String PLAYER_SPRITE_IMAGE_PATH = "assets/sprites/player/cell.png";
 
-    private BufferedImage playerImage;
+    BufferedImage playerImage;
 
     public PlayerBacteriaView() throws IOException {
         this.playerImage = ImageIO.read(new File(PLAYER_SPRITE_IMAGE_PATH));

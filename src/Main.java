@@ -1,8 +1,5 @@
 import com.golden.gamedev.GameLoader;
-import game.model.GameModel;
 import view.GameView;
-
-import java.awt.*;
 
 
 public class Main {

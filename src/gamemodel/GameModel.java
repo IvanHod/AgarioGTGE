@@ -1,15 +1,16 @@
-package game.model;
+package gamemodel;
 
 import com.golden.gamedev.object.Sprite;
 import controller.PlayerBacteriaController;
-import dish.model.Dish;
 import factory.GameObjectFactory;
+import factory.model.AIBacteriaFactory;
 import factory.model.AgarFactory;
 import factory.model.ObstacleFactory;
 import factory.model.PlayerBacteriaFactory;
-import gameobject.model.Agar;
-import gameobject.model.Obstacle;
-import gameobject.model.PlayerBacteria;
+import gameobject.AIBacteria;
+import gameobject.Agar;
+import gameobject.Obstacle;
+import gameobject.PlayerBacteria;
 import listeners.AgarEatenListener;
 import listeners.RevealAgarListener;
 
@@ -28,6 +29,8 @@ public class GameModel implements AgarEatenListener{
 
     final int MAX_AGAR_COUNT = 200;
 
+    final int MAX_AI_BACTERIA_COUNT = 20;
+
     int agarEatenCount;
 
     ArrayList<RevealAgarListener> revealAgarListeners = new ArrayList<>();
@@ -37,6 +40,8 @@ public class GameModel implements AgarEatenListener{
     GameObjectFactory obstacleFactory = new ObstacleFactory();
 
     GameObjectFactory agarFactory = new AgarFactory();
+
+    GameObjectFactory aiBacteraiFactory = new AIBacteriaFactory();
 
     PlayerBacteriaController playerBacteriaController;
 
@@ -60,6 +65,10 @@ public class GameModel implements AgarEatenListener{
             dish.addAgar(((Agar) agarFactory.createGameObject()));
         }
 
+        for (int i = 0; i< MAX_AI_BACTERIA_COUNT; i++) {
+            dish.addAiBacteria((AIBacteria) aiBacteraiFactory.createGameObject());
+        }
+
         fireRevealAgar();
     }
 
@@ -68,7 +77,7 @@ public class GameModel implements AgarEatenListener{
         playerBacteriaController.update(mousePosition);
     }
 
-    private void fireRevealAgar() {
+    void fireRevealAgar() {
 
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(new Runnable() {

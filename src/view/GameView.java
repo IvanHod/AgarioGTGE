@@ -1,27 +1,29 @@
 package view;
 
+import collision.AIAgarCollision;
+import collision.PlayerAICollision;
 import collision.PlayerAgarCollision;
 import collision.PlayerObstacleCollision;
 import com.golden.gamedev.Game;
 import com.golden.gamedev.object.*;
 import com.golden.gamedev.object.background.ImageBackground;
-import dish.model.Dish;
-import game.model.GameModel;
-import gameobject.model.Agar;
-import gameobject.model.Obstacle;
+import gamemodel.Dish;
+import gamemodel.GameModel;
+import gameobject.AIBacteria;
+import gameobject.Agar;
+import gameobject.Obstacle;
 import listeners.AgarEatenListener;
 import listeners.RevealAgarListener;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 
 public class GameView extends Game implements RevealAgarListener, AgarEatenListener {
 
-    private final String DISH_BACKGROUND_IMAGE_PATH = "assets/bg/bg.png";
+    final String DISH_BACKGROUND_IMAGE_PATH = "assets/bg/bg.png";
 
     public static Point initialPlayerPosition = new Point((int) (dimension().getWidth() / 2),
             (int) (dimension().getHeight() / 2));
@@ -34,7 +36,7 @@ public class GameView extends Game implements RevealAgarListener, AgarEatenListe
 
     Dish dish;
 
-    SpriteGroup playerGroup, obstacleGroup, agarGroup;
+    SpriteGroup playerGroup, obstacleGroup, agarGroup, aiBacteriaGroup;
 
     PlayerAgarCollision agarPlayerCollision;
 
@@ -67,7 +69,9 @@ public class GameView extends Game implements RevealAgarListener, AgarEatenListe
 
         obstacleGroup = pf.addGroup(new SpriteGroup("Obstacle Group"));
 
-        agarGroup = pf.addGroup((new SpriteGroup("Agar Group")));
+        agarGroup = pf.addGroup(new SpriteGroup("Agar Group"));
+
+        aiBacteriaGroup = pf.addGroup(new SpriteGroup("AI Bacteria Group"));
 
         playerGroup.add(dish.playerBacteria().sprite());
 
@@ -80,7 +84,15 @@ public class GameView extends Game implements RevealAgarListener, AgarEatenListe
             agarGroup.add(agar.sprite());
         }
 
+        for (AIBacteria aiBacteria : dish.aiBacterias()) {
+            aiBacteriaGroup.add(aiBacteria.sprite());
+        }
+
         pf.addCollisionGroup(playerGroup, obstacleGroup, new PlayerObstacleCollision());
+
+        pf.addCollisionGroup(playerGroup, aiBacteriaGroup, new PlayerAICollision());
+
+        pf.addCollisionGroup(aiBacteriaGroup, agarGroup, new AIAgarCollision());
 
         agarPlayerCollision = new PlayerAgarCollision();
 
@@ -123,7 +135,7 @@ public class GameView extends Game implements RevealAgarListener, AgarEatenListe
         return new Dimension(3000, 3000);
     }
 
-    private Point mousePosition() {
+    Point mousePosition() {
         Point p = new Point(this.getMouseX(), this.getMouseY());
         p.x += bg.getX();
         p.y += bg.getY();
