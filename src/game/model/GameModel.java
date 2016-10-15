@@ -1,5 +1,6 @@
 package game.model;
 
+import com.golden.gamedev.object.Sprite;
 import controller.PlayerBacteriaController;
 import dish.model.Dish;
 import factory.GameObjectFactory;
@@ -23,13 +24,13 @@ import java.util.concurrent.TimeUnit;
 
 public class GameModel implements AgarEatenListener{
 
-    private final int MAX_OBSTACLES_COUNT = 50;
+    final int MAX_OBSTACLES_COUNT = 30;
 
-    private final int MAX_AGAR_COUNT = 200;
+    final int MAX_AGAR_COUNT = 200;
 
-    private int agarEatenCount = 0;
+    int agarEatenCount;
 
-    private ArrayList<RevealAgarListener> revealAgarListeners = new ArrayList<>();
+    ArrayList<RevealAgarListener> revealAgarListeners = new ArrayList<>();
 
     GameObjectFactory playerBacteriaFactory = new PlayerBacteriaFactory();
 
@@ -87,16 +88,21 @@ public class GameModel implements AgarEatenListener{
                     exec.shutdown();
                 }
             }
-        }, 1, 3, TimeUnit.SECONDS);
+        }, 1, 5, TimeUnit.SECONDS);
     }
 
-    public void addAgargeneratedListener(RevealAgarListener revealAgarListener) {
+    public void addAgarGeneratedListener(RevealAgarListener revealAgarListener) {
         revealAgarListeners.add(revealAgarListener);
     }
 
     @Override
-    public void agarEaten() {
+    public void agarEaten(Sprite agarSprite) {
+
         agarEatenCount++;
+    }
+
+    public int getAgarEatenCount() {
+        return  agarEatenCount;
     }
 }
 

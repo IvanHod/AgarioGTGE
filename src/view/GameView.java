@@ -3,23 +3,23 @@ package view;
 import collision.PlayerAgarCollision;
 import collision.PlayerObstacleCollision;
 import com.golden.gamedev.Game;
-import com.golden.gamedev.object.PlayField;
-import com.golden.gamedev.object.Sprite;
-import com.golden.gamedev.object.SpriteGroup;
+import com.golden.gamedev.object.*;
 import com.golden.gamedev.object.background.ImageBackground;
 import dish.model.Dish;
 import game.model.GameModel;
 import gameobject.model.Agar;
 import gameobject.model.Obstacle;
+import listeners.AgarEatenListener;
 import listeners.RevealAgarListener;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 
-public class GameView extends Game implements RevealAgarListener {
+public class GameView extends Game implements RevealAgarListener, AgarEatenListener {
 
     private final String DISH_BACKGROUND_IMAGE_PATH = "assets/bg/bg.png";
 
@@ -36,6 +36,10 @@ public class GameView extends Game implements RevealAgarListener {
 
     SpriteGroup playerGroup, obstacleGroup, agarGroup;
 
+    PlayerAgarCollision agarPlayerCollision;
+
+    GameFont gameFont;
+
 
     @Override
     public void initResources() {
@@ -46,7 +50,7 @@ public class GameView extends Game implements RevealAgarListener {
 
             this.gm = new GameModel(this.dish);
 
-            gm.addAgargeneratedListener(this);
+            gm.addAgarGeneratedListener(this);
 
             this.bg = new ImageBackground(ImageIO.read(new File(DISH_BACKGROUND_IMAGE_PATH)));
 
@@ -78,11 +82,19 @@ public class GameView extends Game implements RevealAgarListener {
 
         pf.addCollisionGroup(playerGroup, obstacleGroup, new PlayerObstacleCollision());
 
-        pf.addCollisionGroup(playerGroup, agarGroup, new PlayerAgarCollision());
+        agarPlayerCollision = new PlayerAgarCollision();
+
+        agarPlayerCollision.addAgarEatenListener(this);
+
+        agarPlayerCollision.addAgarEatenListener(gm);
+
+        pf.addCollisionGroup(playerGroup, agarGroup, agarPlayerCollision);
 
         dish.playerBacteria().setSpeed(0.3);
 
         dish.playerBacteria().setPosition(initialPlayerPosition);
+
+        gameFont = fontManager.getFont(getImage("assets/font/font.fnt"));
 
     }
 
@@ -96,6 +108,8 @@ public class GameView extends Game implements RevealAgarListener {
     public void render(Graphics2D g) {
         pf.render(g);
         bg.setToCenter(dish.playerBacteria().sprite());
+
+        gameFont.drawString(g, "AGAR COUNT: " + String.valueOf(gm.getAgarEatenCount()), 9, 9);
     }
 
 
@@ -132,5 +146,12 @@ public class GameView extends Game implements RevealAgarListener {
             }
 
         }
+    }
+
+    @Override
+    public void agarEaten(Sprite agarSprite) {
+
+        agarGroup.remove(agarSprite);
+        playSound("assets/sound/agar.wav");
     }
 }

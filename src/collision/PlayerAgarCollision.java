@@ -2,9 +2,15 @@ package collision;
 
 import com.golden.gamedev.object.Sprite;
 import com.golden.gamedev.object.collision.BasicCollisionGroup;
+import listeners.AgarEatenListener;
+
+import java.util.ArrayList;
 
 
 public class PlayerAgarCollision extends BasicCollisionGroup {
+
+
+    private ArrayList<AgarEatenListener> agarEatenListeners = new ArrayList<>();
 
     public PlayerAgarCollision() {
         pixelPerfectCollision = true;
@@ -12,7 +18,17 @@ public class PlayerAgarCollision extends BasicCollisionGroup {
 
     @Override
     public void collided(Sprite sprite, Sprite sprite1) {
-        sprite1.setActive(false);
-        sprite1 = null;
+        fireAgarEaten(sprite1);
+    }
+
+
+    public void fireAgarEaten(Sprite agarSprite) {
+        for (AgarEatenListener agarEatenListener : agarEatenListeners) {
+            agarEatenListener.agarEaten(agarSprite);
+        }
+    }
+
+    public void addAgarEatenListener(AgarEatenListener agarEatenListener) {
+        agarEatenListeners.add(agarEatenListener);
     }
 }

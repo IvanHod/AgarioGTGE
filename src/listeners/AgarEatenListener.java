@@ -1,6 +1,8 @@
 package listeners;
 
 
+import com.golden.gamedev.object.Sprite;
+
 public interface AgarEatenListener {
-    void agarEaten();
+    void agarEaten(Sprite agarSprite);
 }
