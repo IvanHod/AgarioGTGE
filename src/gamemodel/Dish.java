@@ -1,13 +1,12 @@
 package gamemodel;
 
 
+import java.util.ArrayList;
 
 import gameobject.AIBacteria;
 import gameobject.Agar;
 import gameobject.Obstacle;
 import gameobject.PlayerBacteria;
-
-import java.util.ArrayList;
 
 
 public class Dish {
@@ -50,7 +49,7 @@ public class Dish {
         return playerBacteria;
     }
 
-    public void addAiBacteria(AIBacteria aiBacteria){
+    public void addAiBacteria(AIBacteria aiBacteria) {
         aiBacterias.add(aiBacteria);
     }
 

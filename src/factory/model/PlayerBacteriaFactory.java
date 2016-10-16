@@ -1,11 +1,11 @@
 package factory.model;
 
+import java.io.IOException;
+
 import factory.GameObjectFactory;
 import gameobject.GameObject;
 import gameobject.PlayerBacteria;
 import view.PlayerBacteriaView;
-
-import java.io.IOException;
 
 
 public class PlayerBacteriaFactory extends GameObjectFactory {

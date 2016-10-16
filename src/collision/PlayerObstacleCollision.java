@@ -7,8 +7,6 @@ import com.golden.gamedev.object.collision.BasicCollisionGroup;
 public class PlayerObstacleCollision extends BasicCollisionGroup {
 
 
-
-
     public PlayerObstacleCollision() {
 
         pixelPerfectCollision = true;

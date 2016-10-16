@@ -1,10 +1,10 @@
 package controller;
 
 
+import java.awt.*;
+
 import game.GameView;
 import gameobject.MovableGameObject;
-
-import java.awt.*;
 
 public abstract class MovableObjectController {
 

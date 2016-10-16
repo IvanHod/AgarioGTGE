@@ -1,16 +1,16 @@
 package factory.model;
 
 
+import java.awt.*;
+import java.io.IOException;
+
 import factory.GameObjectFactory;
 import gameobject.AIBacteria;
 import gameobject.GameObject;
 import utils.PositionRandomizer;
 import view.AIBacteriaView;
 
-import java.awt.*;
-import java.io.IOException;
-
-public class AIBacteriaFactory extends GameObjectFactory{
+public class AIBacteriaFactory extends GameObjectFactory {
 
     Point position;
 

@@ -1,14 +1,14 @@
 package factory.model;
 
 
+import java.awt.*;
+import java.io.IOException;
+
 import factory.GameObjectFactory;
 import gameobject.GameObject;
 import gameobject.Obstacle;
 import utils.PositionRandomizer;
 import view.ObstacleView;
-
-import java.awt.*;
-import java.io.IOException;
 
 public class ObstacleFactory extends GameObjectFactory {
 

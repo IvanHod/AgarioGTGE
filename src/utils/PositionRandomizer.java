@@ -1,10 +1,10 @@
 package utils;
 
 
-import game.GameView;
-
 import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
+
+import game.GameView;
 
 public class PositionRandomizer {
 
@@ -15,11 +15,22 @@ public class PositionRandomizer {
         randomPosition.x = ThreadLocalRandom.current().nextInt(20, (int) GameView.VIEWPORT.getWidth());
         randomPosition.y = ThreadLocalRandom.current().nextInt(20, (int) GameView.VIEWPORT.getHeight());
 
-        if(randomPosition.x == GameView.initialPlayerPosition.x)
+        if (randomPosition.x == GameView.initialPlayerPosition.x)
             randomPosition.x += 500;
-        if(randomPosition.y == GameView.initialPlayerPosition.y)
+        if (randomPosition.y == GameView.initialPlayerPosition.y)
             randomPosition.y -= 500;
 
         return randomPosition;
     }
+
+    public static Point getRandomPosition(int min, int max) {
+
+        Point randomPosition = new Point();
+
+        randomPosition.x = ThreadLocalRandom.current().nextInt(min, max);
+        randomPosition.y = ThreadLocalRandom.current().nextInt(min, max);
+
+        return randomPosition;
+    }
+
 }

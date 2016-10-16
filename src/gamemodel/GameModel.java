@@ -1,6 +1,15 @@
 package gamemodel;
 
 import com.golden.gamedev.object.Sprite;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+
 import controller.AIBacteriaController;
 import controller.MovableObjectController;
 import controller.PlayerBacteriaController;
@@ -9,6 +18,7 @@ import factory.model.AIBacteriaFactory;
 import factory.model.AgarFactory;
 import factory.model.ObstacleFactory;
 import factory.model.PlayerBacteriaFactory;
+import game.GameView;
 import gameobject.AIBacteria;
 import gameobject.Agar;
 import gameobject.Obstacle;
@@ -16,21 +26,18 @@ import gameobject.PlayerBacteria;
 import listeners.AgarEatenListener;
 import listeners.RevealAgarListener;
 
-import java.awt.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-
-public class GameModel implements AgarEatenListener{
+public class GameModel implements AgarEatenListener {
 
     final int MAX_OBSTACLES_COUNT = 30;
 
     final int MAX_AGAR_COUNT = 500;
 
-    final int MAX_AI_BACTERIA_COUNT = 20;
+    final int MAX_AI_BACTERIA_COUNT = 30;
+
+    final double PLAYER_SPEED = 0.3;
+
+    final double AI_SPEED = 0.1;
 
     int agarEatenCount;
 
@@ -56,18 +63,26 @@ public class GameModel implements AgarEatenListener{
 
         movableObjectControllers.add(new PlayerBacteriaController(playerBacteria));
 
+        playerBacteria.setSpeed(PLAYER_SPEED);
+
+        playerBacteria.setPosition(GameView.initialPlayerPosition);
+
         dish.addPlayerBacteria(playerBacteria);
 
         for (int i = 0; i < MAX_OBSTACLES_COUNT; i++) {
             dish.addObstacle((Obstacle) obstacleFactory.createGameObject());
         }
 
-        for(int i = 0; i < MAX_AGAR_COUNT; i++) {
+        for (int i = 0; i < MAX_AGAR_COUNT; i++) {
             dish.addAgar(((Agar) agarFactory.createGameObject()));
         }
 
-        for (int i = 0; i< MAX_AI_BACTERIA_COUNT; i++) {
+        for (int i = 0; i < MAX_AI_BACTERIA_COUNT; i++) {
             AIBacteria aiBacteria = (AIBacteria) aiBacteraiFactory.createGameObject();
+
+            aiBacteria.setSpeed(AI_SPEED);
+
+            aiBacteria.setDirection(ThreadLocalRandom.current().nextInt(0, 360));
 
             movableObjectControllers.add(new AIBacteriaController(playerBacteria, aiBacteria));
 
@@ -79,10 +94,9 @@ public class GameModel implements AgarEatenListener{
 
     public void update(Point mousePosition) {
 
-        for(MovableObjectController movableObjectController : movableObjectControllers) {
+        for (MovableObjectController movableObjectController : movableObjectControllers) {
             movableObjectController.update(mousePosition);
         }
-
 
     }
 
@@ -102,7 +116,7 @@ public class GameModel implements AgarEatenListener{
 
                 agarRevealedCount += 10;
 
-                if(agarRevealedCount == MAX_AGAR_COUNT) {
+                if (agarRevealedCount == MAX_AGAR_COUNT) {
                     exec.shutdown();
                 }
             }
@@ -115,12 +129,11 @@ public class GameModel implements AgarEatenListener{
 
     @Override
     public void agarEaten(Sprite agarSprite) {
-
         agarEatenCount++;
     }
 
     public int getAgarEatenCount() {
-        return  agarEatenCount;
+        return agarEatenCount;
     }
 }
 

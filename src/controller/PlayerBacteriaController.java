@@ -1,9 +1,9 @@
 package controller;
 
+import java.awt.*;
+
 import gameobject.PlayerBacteria;
 import utils.GameMath;
-
-import java.awt.*;
 
 public class PlayerBacteriaController extends MovableObjectController {
 

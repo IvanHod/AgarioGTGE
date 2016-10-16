@@ -1,15 +1,22 @@
 package game;
 
-import collision.AIAgarCollision;
-import collision.PlayerAICollision;
-import collision.PlayerAgarCollision;
-import collision.PlayerObstacleCollision;
 import com.golden.gamedev.Game;
 import com.golden.gamedev.object.GameFont;
 import com.golden.gamedev.object.PlayField;
 import com.golden.gamedev.object.Sprite;
 import com.golden.gamedev.object.SpriteGroup;
 import com.golden.gamedev.object.background.ImageBackground;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import collision.AIAgarCollision;
+import collision.PlayerAICollision;
+import collision.PlayerAgarCollision;
+import collision.PlayerObstacleCollision;
 import gamemodel.Dish;
 import gamemodel.GameModel;
 import gameobject.AIBacteria;
@@ -18,23 +25,14 @@ import gameobject.Obstacle;
 import listeners.AgarEatenListener;
 import listeners.RevealAgarListener;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-
 
 public class GameView extends Game implements RevealAgarListener, AgarEatenListener {
 
-    final String DISH_BACKGROUND_IMAGE_PATH = "assets/bg/bg.png";
-
     public static final Dimension VIEWPORT = new Dimension(3000, 3000);
-
     public static final Dimension DIMENSION = new Dimension(1280, 720);
-
     public static Point initialPlayerPosition = new Point((int) (DIMENSION.getWidth() / 2),
             (int) (DIMENSION.getHeight() / 2));
-
+    final String DISH_BACKGROUND_IMAGE_PATH = "assets/bg/bg.png";
     ImageBackground bg;
 
     PlayField pf;
@@ -63,7 +61,7 @@ public class GameView extends Game implements RevealAgarListener, AgarEatenListe
 
             this.bg = new ImageBackground(ImageIO.read(new File(DISH_BACKGROUND_IMAGE_PATH)));
 
-            this.bg.setClip(0, 0, (int) DIMENSION.getWidth(),(int) DIMENSION.getHeight());
+            this.bg.setClip(0, 0, (int) DIMENSION.getWidth(), (int) DIMENSION.getHeight());
 
             pf = new PlayField(bg);
 
@@ -87,7 +85,6 @@ public class GameView extends Game implements RevealAgarListener, AgarEatenListe
             }
 
             for (AIBacteria aiBacteria : dish.aiBacterias()) {
-                aiBacteria.setSpeed(0.1);
                 aiBacteriaGroup.add(aiBacteria.sprite());
             }
 
@@ -105,14 +102,9 @@ public class GameView extends Game implements RevealAgarListener, AgarEatenListe
 
             pf.addCollisionGroup(playerGroup, agarGroup, agarPlayerCollision);
 
-            dish.playerBacteria().setSpeed(0.3);
-
-            dish.playerBacteria().setPosition(initialPlayerPosition);
-
             gameFont = fontManager.getFont(getImage("assets/font/font.fnt"));
 
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -146,12 +138,12 @@ public class GameView extends Game implements RevealAgarListener, AgarEatenListe
         int revealedAgar = 0;
 
         for (Sprite agarSprite : agarGroup.getSprites()) {
-            if(!agarSprite.isActive()) {
+            if (!agarSprite.isActive()) {
                 agarSprite.setActive(true);
                 revealedAgar++;
             }
 
-            if(revealedAgar == 10){
+            if (revealedAgar == 10) {
                 break;
             }
 

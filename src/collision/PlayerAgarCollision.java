@@ -2,9 +2,10 @@ package collision;
 
 import com.golden.gamedev.object.Sprite;
 import com.golden.gamedev.object.collision.BasicCollisionGroup;
-import listeners.AgarEatenListener;
 
 import java.util.ArrayList;
+
+import listeners.AgarEatenListener;
 
 
 public class PlayerAgarCollision extends BasicCollisionGroup {

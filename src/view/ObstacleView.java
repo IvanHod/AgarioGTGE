@@ -1,9 +1,10 @@
 package view;
 
-import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
+
+import javax.imageio.ImageIO;
 
 
 public class ObstacleView extends GameObjectView {

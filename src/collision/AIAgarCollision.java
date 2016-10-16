@@ -6,7 +6,7 @@ import com.golden.gamedev.object.collision.BasicCollisionGroup;
 
 public class AIAgarCollision extends BasicCollisionGroup {
 
-    public AIAgarCollision(){
+    public AIAgarCollision() {
         pixelPerfectCollision = true;
     }
 

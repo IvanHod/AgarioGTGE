@@ -1,6 +1,7 @@
 package gameobject;
 
 import com.golden.gamedev.object.Sprite;
+
 import view.GameObjectView;
 
 public abstract class GameObject {

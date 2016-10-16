@@ -1,14 +1,13 @@
 package factory.model;
 
+import java.awt.*;
+import java.io.IOException;
+
 import factory.GameObjectFactory;
 import gameobject.Agar;
 import gameobject.GameObject;
 import utils.PositionRandomizer;
 import view.AgarView;
-import view.GameObjectView;
-
-import java.awt.*;
-import java.io.IOException;
 
 public class AgarFactory extends GameObjectFactory {
 
