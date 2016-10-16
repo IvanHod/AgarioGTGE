@@ -4,7 +4,6 @@ import com.golden.gamedev.object.Sprite;
 
 import java.awt.*;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -90,7 +89,7 @@ public class GameModel implements AgarEatenListener {
 
             aiBacteria.setDirection(ThreadLocalRandom.current().nextInt(0, 360));
 
-            movableObjectControllers.add(new AIBacteriaController(playerBacteria, aiBacteria));
+            movableObjectControllers.add(new AIBacteriaController(playerBacteria, aiBacteria, dish.agar()));
 
             dish.addAiBacteria(aiBacteria);
         }
@@ -131,9 +130,9 @@ public class GameModel implements AgarEatenListener {
         }, 1, 2, TimeUnit.SECONDS);
     }
 
-    void fireLevelUp(Sprite sprite) {
-        for(LevelUpListener levelUpListener : levelUpListeners) {
-            levelUpListener.levelIncreased(sprite);
+    void fireLevelUp(Sprite movableGameObjectSprite) {
+        for (LevelUpListener levelUpListener : levelUpListeners) {
+            levelUpListener.levelIncreased(movableGameObjectSprite);
         }
     }
 
@@ -148,17 +147,16 @@ public class GameModel implements AgarEatenListener {
     @Override
     public void agarEaten(Sprite movableGameObjectSprite, Sprite agarSprite) {
 
-        if(dish.playerBacteria().sprite() == movableGameObjectSprite) {
+        if (dish.playerBacteria().sprite() == movableGameObjectSprite) {
             dish.playerBacteria().increaseEatenAgarAmount();
             agarEatenByPlayerCount++;
-            if(dish.playerBacteria().agarEatenCount() % LEVEL_MULTIPLICATOR == 0) {
+            if (dish.playerBacteria().agarEatenCount() % LEVEL_MULTIPLICATOR == 0) {
                 dish.playerBacteria().leveUp();
                 fireLevelUp(movableGameObjectSprite);
             }
-        }
-        else {
+        } else {
             for (AIBacteria aiBacteria : dish.aiBacterias()) {
-                if(aiBacteria.sprite() == movableGameObjectSprite) {
+                if (aiBacteria.sprite() == movableGameObjectSprite) {
                     aiBacteria.increaseEatenAgarAmount();
 
                     if (aiBacteria.agarEatenCount() % LEVEL_MULTIPLICATOR == 0) {

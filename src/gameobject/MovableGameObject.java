@@ -55,7 +55,7 @@ public abstract class MovableGameObject extends GameObject {
         return agarEaten;
     }
 
-    public void increaseEatenAgarAmount(){
+    public void increaseEatenAgarAmount() {
         agarEaten++;
     }
 

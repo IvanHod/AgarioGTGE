@@ -166,16 +166,19 @@ public class GameView extends Game implements RevealAgarListener, AgarEatenListe
     public void agarEaten(Sprite movableGameObjectSprite, Sprite agarSprite) {
 
         agarGroup.remove(agarSprite);
-        if(dish.playerBacteria().sprite() == movableGameObjectSprite)
+        if (dish.playerBacteria().sprite() == movableGameObjectSprite)
             playSound("assets/sound/agar.wav");
 
     }
 
     @Override
-    public void levelIncreased(Sprite sprite) {
+    public void levelIncreased(Sprite movableGameObjectSprite) {
 
-        BufferedImage currentSpriteImage = sprite.getImage();
+        if (dish.playerBacteria().sprite() == movableGameObjectSprite)
+            playSound("assets/sound/levelup.wav");
 
-        sprite.setImage(ImageScaler.scaleImage(currentSpriteImage, 30, 30));
+        BufferedImage currentSpriteImage = movableGameObjectSprite.getImage();
+
+        movableGameObjectSprite.setImage(ImageScaler.scaleImage(currentSpriteImage, 30, 30));
     }
 }
