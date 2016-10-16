@@ -1,10 +1,13 @@
 package gameobject;
 
 import com.golden.gamedev.object.Sprite;
-
-import java.awt.*;
+import view.GameObjectView;
 
 public abstract class GameObject {
 
-    public abstract Sprite sprite();
+    GameObjectView gameObjectView;
+
+    public Sprite sprite() {
+        return gameObjectView.getObjectSprite();
+    }
 }

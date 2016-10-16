@@ -1,12 +1,11 @@
 package factory.model;
 
 import factory.GameObjectFactory;
-import factory.GameObjectViewFactory;
-import factory.view.PlayerBacteriaViewFactory;
 import gameobject.GameObject;
 import gameobject.PlayerBacteria;
-import sprite.PlayerBacteriaSprite;
 import view.PlayerBacteriaView;
+
+import java.io.IOException;
 
 
 public class PlayerBacteriaFactory extends GameObjectFactory {
@@ -14,12 +13,12 @@ public class PlayerBacteriaFactory extends GameObjectFactory {
     @Override
     public GameObject createGameObject() {
 
-        PlayerBacteriaSprite playerBacteriaSprite = null;
+        try {
+            return new PlayerBacteria(new PlayerBacteriaView());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        GameObjectViewFactory playerBacteriaViewFactory = new PlayerBacteriaViewFactory();
-
-        playerBacteriaSprite = new PlayerBacteriaSprite((PlayerBacteriaView) playerBacteriaViewFactory.createGameObjectView());
-
-        return new PlayerBacteria(playerBacteriaSprite);
+        return null;
     }
 }

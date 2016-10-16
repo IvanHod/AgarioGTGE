@@ -1,11 +1,14 @@
-package view;
+package game;
 
 import collision.AIAgarCollision;
 import collision.PlayerAICollision;
 import collision.PlayerAgarCollision;
 import collision.PlayerObstacleCollision;
 import com.golden.gamedev.Game;
-import com.golden.gamedev.object.*;
+import com.golden.gamedev.object.GameFont;
+import com.golden.gamedev.object.PlayField;
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
 import com.golden.gamedev.object.background.ImageBackground;
 import gamemodel.Dish;
 import gamemodel.GameModel;
@@ -25,8 +28,12 @@ public class GameView extends Game implements RevealAgarListener, AgarEatenListe
 
     final String DISH_BACKGROUND_IMAGE_PATH = "assets/bg/bg.png";
 
-    public static Point initialPlayerPosition = new Point((int) (dimension().getWidth() / 2),
-            (int) (dimension().getHeight() / 2));
+    public static final Dimension VIEWPORT = new Dimension(3000, 3000);
+
+    public static final Dimension DIMENSION = new Dimension(1280, 720);
+
+    public static Point initialPlayerPosition = new Point((int) (DIMENSION.getWidth() / 2),
+            (int) (DIMENSION.getHeight() / 2));
 
     ImageBackground bg;
 
@@ -56,63 +63,65 @@ public class GameView extends Game implements RevealAgarListener, AgarEatenListe
 
             this.bg = new ImageBackground(ImageIO.read(new File(DISH_BACKGROUND_IMAGE_PATH)));
 
-            this.bg.setClip(0, 0, (int) dimension().getWidth(),(int) dimension().getHeight());
+            this.bg.setClip(0, 0, (int) DIMENSION.getWidth(),(int) DIMENSION.getHeight());
+
+            pf = new PlayField(bg);
+
+            playerGroup = pf.addGroup(new SpriteGroup("Player Group"));
+
+            obstacleGroup = pf.addGroup(new SpriteGroup("Obstacle Group"));
+
+            agarGroup = pf.addGroup(new SpriteGroup("Agar Group"));
+
+            aiBacteriaGroup = pf.addGroup(new SpriteGroup("AI Bacteria Group"));
+
+            playerGroup.add(dish.playerBacteria().sprite());
+
+            for (Obstacle obstacle : dish.obstacles()) {
+                obstacleGroup.add(obstacle.sprite());
+            }
+
+            for (Agar agar : dish.agar()) {
+                agar.sprite().setActive(false);
+                agarGroup.add(agar.sprite());
+            }
+
+            for (AIBacteria aiBacteria : dish.aiBacterias()) {
+                aiBacteria.setSpeed(0.1);
+                aiBacteriaGroup.add(aiBacteria.sprite());
+            }
+
+            pf.addCollisionGroup(playerGroup, obstacleGroup, new PlayerObstacleCollision());
+
+            pf.addCollisionGroup(playerGroup, aiBacteriaGroup, new PlayerAICollision());
+
+            pf.addCollisionGroup(aiBacteriaGroup, agarGroup, new AIAgarCollision());
+
+            agarPlayerCollision = new PlayerAgarCollision();
+
+            agarPlayerCollision.addAgarEatenListener(this);
+
+            agarPlayerCollision.addAgarEatenListener(gm);
+
+            pf.addCollisionGroup(playerGroup, agarGroup, agarPlayerCollision);
+
+            dish.playerBacteria().setSpeed(0.3);
+
+            dish.playerBacteria().setPosition(initialPlayerPosition);
+
+            gameFont = fontManager.getFont(getImage("assets/font/font.fnt"));
 
         }
         catch (IOException e) {
             e.printStackTrace();
         }
 
-        pf = new PlayField(bg);
-
-        playerGroup = pf.addGroup(new SpriteGroup("Player Group"));
-
-        obstacleGroup = pf.addGroup(new SpriteGroup("Obstacle Group"));
-
-        agarGroup = pf.addGroup(new SpriteGroup("Agar Group"));
-
-        aiBacteriaGroup = pf.addGroup(new SpriteGroup("AI Bacteria Group"));
-
-        playerGroup.add(dish.playerBacteria().sprite());
-
-        for (Obstacle obstacle : dish.obstacles()) {
-            obstacleGroup.add(obstacle.sprite());
-        }
-
-        for (Agar agar : dish.agar()) {
-            agar.sprite().setActive(false);
-            agarGroup.add(agar.sprite());
-        }
-
-        for (AIBacteria aiBacteria : dish.aiBacterias()) {
-            aiBacteriaGroup.add(aiBacteria.sprite());
-        }
-
-        pf.addCollisionGroup(playerGroup, obstacleGroup, new PlayerObstacleCollision());
-
-        pf.addCollisionGroup(playerGroup, aiBacteriaGroup, new PlayerAICollision());
-
-        pf.addCollisionGroup(aiBacteriaGroup, agarGroup, new AIAgarCollision());
-
-        agarPlayerCollision = new PlayerAgarCollision();
-
-        agarPlayerCollision.addAgarEatenListener(this);
-
-        agarPlayerCollision.addAgarEatenListener(gm);
-
-        pf.addCollisionGroup(playerGroup, agarGroup, agarPlayerCollision);
-
-        dish.playerBacteria().setSpeed(0.3);
-
-        dish.playerBacteria().setPosition(initialPlayerPosition);
-
-        gameFont = fontManager.getFont(getImage("assets/font/font.fnt"));
-
     }
 
     @Override
     public void update(long elapsedTime) {
         pf.update(elapsedTime);
+
         gm.update(mousePosition());
     }
 
@@ -122,17 +131,6 @@ public class GameView extends Game implements RevealAgarListener, AgarEatenListe
         bg.setToCenter(dish.playerBacteria().sprite());
 
         gameFont.drawString(g, "AGAR COUNT: " + String.valueOf(gm.getAgarEatenCount()), 9, 9);
-    }
-
-
-    public static Dimension dimension() {
-
-        return new Dimension(1280, 720);
-    }
-
-    public static Dimension viewport() {
-
-        return new Dimension(3000, 3000);
     }
 
     Point mousePosition() {

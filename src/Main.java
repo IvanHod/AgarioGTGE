@@ -1,13 +1,13 @@
 import com.golden.gamedev.GameLoader;
-import view.GameView;
+import game.GameView;
 
 
 public class Main {
 
     public static void main(String[] args) {
         GameLoader game = new GameLoader();
-        GameView gw = new GameView();
-        game.setup(gw, gw.dimension(), false);
+        GameView gameView = new GameView();
+        game.setup(gameView, gameView.DIMENSION, false);
         game.start();
     }
 }

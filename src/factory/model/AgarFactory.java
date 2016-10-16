@@ -1,34 +1,37 @@
 package factory.model;
 
 import factory.GameObjectFactory;
-import factory.GameObjectViewFactory;
-import factory.view.AgarViewFactory;
 import gameobject.Agar;
 import gameobject.GameObject;
-import sprite.AgarSprite;
 import utils.PositionRandomizer;
 import view.AgarView;
+import view.GameObjectView;
 
 import java.awt.*;
+import java.io.IOException;
 
 public class AgarFactory extends GameObjectFactory {
 
     Point position;
 
+    AgarView agarView;
+
     @Override
     public GameObject createGameObject() {
 
-        AgarSprite agarSprite;
+        try {
 
-        GameObjectViewFactory gameObjectViewFactory = new AgarViewFactory();
+            agarView = new AgarView();
 
-        agarSprite = new AgarSprite((AgarView) gameObjectViewFactory.createGameObjectView());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         position = PositionRandomizer.getRandomPosition();
 
-        agarSprite.setX(position.x);
-        agarSprite.setY(position.y);
+        agarView.getObjectSprite().setX(position.x);
+        agarView.getObjectSprite().setY(position.y);
 
-        return new Agar(agarSprite);
+        return new Agar(agarView);
     }
 }

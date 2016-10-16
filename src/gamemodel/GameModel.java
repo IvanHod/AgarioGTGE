@@ -1,6 +1,8 @@
 package gamemodel;
 
 import com.golden.gamedev.object.Sprite;
+import controller.AIBacteriaController;
+import controller.MovableObjectController;
 import controller.PlayerBacteriaController;
 import factory.GameObjectFactory;
 import factory.model.AIBacteriaFactory;
@@ -14,7 +16,6 @@ import gameobject.PlayerBacteria;
 import listeners.AgarEatenListener;
 import listeners.RevealAgarListener;
 
-
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class GameModel implements AgarEatenListener{
 
     final int MAX_OBSTACLES_COUNT = 30;
 
-    final int MAX_AGAR_COUNT = 200;
+    final int MAX_AGAR_COUNT = 500;
 
     final int MAX_AI_BACTERIA_COUNT = 20;
 
@@ -43,7 +44,7 @@ public class GameModel implements AgarEatenListener{
 
     GameObjectFactory aiBacteraiFactory = new AIBacteriaFactory();
 
-    PlayerBacteriaController playerBacteriaController;
+    ArrayList<MovableObjectController> movableObjectControllers = new ArrayList<>();
 
     Dish dish;
 
@@ -53,7 +54,7 @@ public class GameModel implements AgarEatenListener{
 
         PlayerBacteria playerBacteria = (PlayerBacteria) playerBacteriaFactory.createGameObject();
 
-        playerBacteriaController = new PlayerBacteriaController(playerBacteria);
+        movableObjectControllers.add(new PlayerBacteriaController(playerBacteria));
 
         dish.addPlayerBacteria(playerBacteria);
 
@@ -66,7 +67,11 @@ public class GameModel implements AgarEatenListener{
         }
 
         for (int i = 0; i< MAX_AI_BACTERIA_COUNT; i++) {
-            dish.addAiBacteria((AIBacteria) aiBacteraiFactory.createGameObject());
+            AIBacteria aiBacteria = (AIBacteria) aiBacteraiFactory.createGameObject();
+
+            movableObjectControllers.add(new AIBacteriaController(playerBacteria, aiBacteria));
+
+            dish.addAiBacteria(aiBacteria);
         }
 
         fireRevealAgar();
@@ -74,7 +79,11 @@ public class GameModel implements AgarEatenListener{
 
     public void update(Point mousePosition) {
 
-        playerBacteriaController.update(mousePosition);
+        for(MovableObjectController movableObjectController : movableObjectControllers) {
+            movableObjectController.update(mousePosition);
+        }
+
+
     }
 
     void fireRevealAgar() {
@@ -97,7 +106,7 @@ public class GameModel implements AgarEatenListener{
                     exec.shutdown();
                 }
             }
-        }, 1, 5, TimeUnit.SECONDS);
+        }, 1, 2, TimeUnit.SECONDS);
     }
 
     public void addAgarGeneratedListener(RevealAgarListener revealAgarListener) {

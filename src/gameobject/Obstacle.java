@@ -1,18 +1,13 @@
 package gameobject;
 
-
-import sprite.ObstacleSprite;
+import view.ObstacleView;
 
 public class Obstacle extends GameObject {
 
-    ObstacleSprite obstacleSprite;
 
-    public Obstacle(ObstacleSprite obstacleSprite) {
-        this.obstacleSprite = obstacleSprite;
+    public Obstacle(ObstacleView obstacleView) {
+
+        gameObjectView = obstacleView;
     }
 
-    @Override
-    public ObstacleSprite sprite() {
-        return obstacleSprite;
-    }
 }

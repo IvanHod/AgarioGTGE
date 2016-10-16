@@ -5,17 +5,16 @@ import utils.GameMath;
 
 import java.awt.*;
 
-public class PlayerBacteriaController {
+public class PlayerBacteriaController extends MovableObjectController {
 
-    PlayerBacteria playerBacteria;
 
     public PlayerBacteriaController(PlayerBacteria playerBacteria) {
-        this.playerBacteria = playerBacteria;
-
+        movableGameObject = playerBacteria;
     }
 
     public void update(Point mousePosition) {
-        int angle = GameMath.angle(playerBacteria.getPosition(), mousePosition);
-        playerBacteria.setDirection(angle);
+        super.update(mousePosition);
+        int angle = GameMath.angle(movableGameObject.getPosition(), mousePosition);
+        movableGameObject.setDirection(angle);
     }
 }

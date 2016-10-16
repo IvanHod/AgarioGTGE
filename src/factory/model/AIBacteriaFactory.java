@@ -2,36 +2,34 @@ package factory.model;
 
 
 import factory.GameObjectFactory;
-
-import factory.GameObjectViewFactory;
-import factory.view.AIBacteriaViewFactory;
 import gameobject.AIBacteria;
 import gameobject.GameObject;
-import sprite.AIBacteriaSprite;
 import utils.PositionRandomizer;
 import view.AIBacteriaView;
 
-
 import java.awt.*;
+import java.io.IOException;
 
 public class AIBacteriaFactory extends GameObjectFactory{
 
     Point position;
 
+    AIBacteriaView aiBacteriaView;
+
     @Override
     public GameObject createGameObject() {
 
-        AIBacteriaSprite aiBacteriaSprite;
-
-        GameObjectViewFactory gameObjectViewFactory = new AIBacteriaViewFactory();
-
-        aiBacteriaSprite = new AIBacteriaSprite((AIBacteriaView) gameObjectViewFactory.createGameObjectView());
+        try {
+            aiBacteriaView = new AIBacteriaView();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         position = PositionRandomizer.getRandomPosition();
 
-        aiBacteriaSprite.setX(position.x);
-        aiBacteriaSprite.setY(position.y);
+        aiBacteriaView.getObjectSprite().setX(position.x);
+        aiBacteriaView.getObjectSprite().setY(position.y);
 
-        return new AIBacteria(aiBacteriaSprite);
+        return new AIBacteria(aiBacteriaView);
     }
 }

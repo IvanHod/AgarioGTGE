@@ -1,19 +1,13 @@
 package gameobject;
 
+import view.AgarView;
 
-import com.golden.gamedev.object.Sprite;
-import sprite.AgarSprite;
+public class Agar extends GameObject {
 
-public class Agar extends GameObject{
 
-    AgarSprite agarSprite;
+    public Agar(AgarView agarView) {
 
-    public Agar(AgarSprite agarSprite) {
-        this.agarSprite = agarSprite;
+        gameObjectView = agarView;
     }
 
-    @Override
-    public Sprite sprite() {
-        return agarSprite;
-    }
 }

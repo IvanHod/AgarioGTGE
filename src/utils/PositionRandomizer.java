@@ -1,7 +1,7 @@
 package utils;
 
 
-import view.GameView;
+import game.GameView;
 
 import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -12,8 +12,8 @@ public class PositionRandomizer {
 
         Point randomPosition = new Point();
 
-        randomPosition.x = ThreadLocalRandom.current().nextInt(20, (int) GameView.viewport().getWidth());
-        randomPosition.y = ThreadLocalRandom.current().nextInt(20, (int) GameView.viewport().getHeight());
+        randomPosition.x = ThreadLocalRandom.current().nextInt(20, (int) GameView.VIEWPORT.getWidth());
+        randomPosition.y = ThreadLocalRandom.current().nextInt(20, (int) GameView.VIEWPORT.getHeight());
 
         if(randomPosition.x == GameView.initialPlayerPosition.x)
             randomPosition.x += 500;

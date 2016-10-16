@@ -2,33 +2,34 @@ package factory.model;
 
 
 import factory.GameObjectFactory;
-import factory.GameObjectViewFactory;
-import factory.view.ObstacleViewFactory;
 import gameobject.GameObject;
 import gameobject.Obstacle;
-import sprite.ObstacleSprite;
 import utils.PositionRandomizer;
 import view.ObstacleView;
 
 import java.awt.*;
+import java.io.IOException;
 
 public class ObstacleFactory extends GameObjectFactory {
 
     Point position;
 
+    ObstacleView obstacleView;
+
     @Override
     public GameObject createGameObject() {
-        ObstacleSprite obstacleSprite;
 
-        GameObjectViewFactory gameObjectViewFactory = new ObstacleViewFactory();
-
-        obstacleSprite = new ObstacleSprite((ObstacleView) gameObjectViewFactory.createGameObjectView());
+        try {
+            obstacleView = new ObstacleView();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         position = PositionRandomizer.getRandomPosition();
 
-        obstacleSprite.setX(position.x);
-        obstacleSprite.setY(position.y);
+        obstacleView.getObjectSprite().setX(position.x);
+        obstacleView.getObjectSprite().setY(position.y);
 
-        return new Obstacle(obstacleSprite);
+        return new Obstacle(obstacleView);
     }
 }
