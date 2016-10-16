@@ -12,9 +12,11 @@ public class PlayerBacteriaController extends MovableObjectController {
         movableGameObject = playerBacteria;
     }
 
-    public void update(Point mousePosition) {
+    public boolean update(Point mousePosition) {
         super.update(mousePosition);
         int angle = GameMath.angle(movableGameObject.getPosition(), mousePosition);
         movableGameObject.setDirection(angle);
+
+        return true;
     }
 }

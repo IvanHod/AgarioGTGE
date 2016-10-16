@@ -19,13 +19,13 @@ public class PlayerAgarCollision extends BasicCollisionGroup {
 
     @Override
     public void collided(Sprite sprite, Sprite sprite1) {
-        fireAgarEaten(sprite1);
+        fireAgarEaten(sprite, sprite1);
     }
 
 
-    public void fireAgarEaten(Sprite agarSprite) {
+    public void fireAgarEaten(Sprite movableGameObjectSprite, Sprite agarSprite) {
         for (AgarEatenListener agarEatenListener : agarEatenListeners) {
-            agarEatenListener.agarEaten(agarSprite);
+            agarEatenListener.agarEaten(movableGameObjectSprite, agarSprite);
         }
     }
 

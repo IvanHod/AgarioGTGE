@@ -4,6 +4,7 @@ import com.golden.gamedev.object.Sprite;
 
 import java.awt.*;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,6 +25,7 @@ import gameobject.Agar;
 import gameobject.Obstacle;
 import gameobject.PlayerBacteria;
 import listeners.AgarEatenListener;
+import listeners.LevelUpListener;
 import listeners.RevealAgarListener;
 
 
@@ -39,9 +41,13 @@ public class GameModel implements AgarEatenListener {
 
     final double AI_SPEED = 0.1;
 
-    int agarEatenCount;
+    final int LEVEL_MULTIPLICATOR = 5;
+
+    int agarEatenByPlayerCount;
 
     ArrayList<RevealAgarListener> revealAgarListeners = new ArrayList<>();
+
+    ArrayList<LevelUpListener> levelUpListeners = new ArrayList<>();
 
     GameObjectFactory playerBacteriaFactory = new PlayerBacteriaFactory();
 
@@ -98,6 +104,8 @@ public class GameModel implements AgarEatenListener {
             movableObjectController.update(mousePosition);
         }
 
+        System.out.println(dish.playerBacteria().level());
+
     }
 
     void fireRevealAgar() {
@@ -123,17 +131,48 @@ public class GameModel implements AgarEatenListener {
         }, 1, 2, TimeUnit.SECONDS);
     }
 
+    void fireLevelUp(Sprite sprite) {
+        for(LevelUpListener levelUpListener : levelUpListeners) {
+            levelUpListener.levelIncreased(sprite);
+        }
+    }
+
+    public void addLevelUpListener(LevelUpListener levelUpListener) {
+        levelUpListeners.add(levelUpListener);
+    }
+
     public void addAgarGeneratedListener(RevealAgarListener revealAgarListener) {
         revealAgarListeners.add(revealAgarListener);
     }
 
     @Override
-    public void agarEaten(Sprite agarSprite) {
-        agarEatenCount++;
+    public void agarEaten(Sprite movableGameObjectSprite, Sprite agarSprite) {
+
+        if(dish.playerBacteria().sprite() == movableGameObjectSprite) {
+            dish.playerBacteria().increaseEatenAgarAmount();
+            agarEatenByPlayerCount++;
+            if(dish.playerBacteria().agarEatenCount() % LEVEL_MULTIPLICATOR == 0) {
+                dish.playerBacteria().leveUp();
+                fireLevelUp(movableGameObjectSprite);
+            }
+        }
+        else {
+            for (AIBacteria aiBacteria : dish.aiBacterias()) {
+                if(aiBacteria.sprite() == movableGameObjectSprite) {
+                    aiBacteria.increaseEatenAgarAmount();
+
+                    if (aiBacteria.agarEatenCount() % LEVEL_MULTIPLICATOR == 0) {
+                        aiBacteria.leveUp();
+                        fireLevelUp(movableGameObjectSprite);
+                    }
+                }
+            }
+        }
+
     }
 
     public int getAgarEatenCount() {
-        return agarEatenCount;
+        return agarEatenByPlayerCount;
     }
 }
 

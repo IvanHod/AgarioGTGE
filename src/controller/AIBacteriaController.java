@@ -2,7 +2,6 @@ package controller;
 
 
 import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 import gameobject.AIBacteria;
 import gameobject.PlayerBacteria;
@@ -22,8 +21,9 @@ public class AIBacteriaController extends MovableObjectController {
         desiredPosition = PositionRandomizer.getRandomPosition();
     }
 
-    public void update(Point mousePosition) {
-        super.update(mousePosition);
+    public boolean update(Point mousePosition) {
+
+        boolean isOnEdge = super.update(mousePosition);
 
         Point playerPos = otherMovableGameObject.getPosition();
         Point aiPos = movableGameObject.getPosition();
@@ -34,16 +34,19 @@ public class AIBacteriaController extends MovableObjectController {
             int toPlayer = GameMath.angle(movableGameObject.getPosition(), otherMovableGameObject.getPosition());
 
             movableGameObject.setDirection(toPlayer);
-        }
-
-        else {
+        } else {
 
             if (GameMath.distance(aiPos, desiredPosition) <= 50) {
                 desiredPosition = PositionRandomizer.getRandomPosition();
             }
 
+            if (isOnEdge) {
+                desiredPosition = PositionRandomizer.getRandomPosition();
+            }
+
             movableGameObject.setDirection(GameMath.angle(movableGameObject.getPosition(), desiredPosition));
         }
+        return true;
     }
 
 

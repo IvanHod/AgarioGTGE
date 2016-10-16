@@ -11,6 +11,10 @@ public abstract class MovableGameObject extends GameObject {
 
     double speed;
 
+    int level = 1;
+
+    int agarEaten;
+
     public Point getPosition() {
         Point position = new Point();
         position.x = (int) (this.sprite().getX());
@@ -42,4 +46,21 @@ public abstract class MovableGameObject extends GameObject {
         this.sprite().setHorizontalSpeed(speed * Math.cos(GameMath.degreesToRadians(angle)));
         this.sprite().setVerticalSpeed(speed * Math.sin(GameMath.degreesToRadians(angle)));
     }
+
+    public int level() {
+        return level;
+    }
+
+    public int agarEatenCount() {
+        return agarEaten;
+    }
+
+    public void increaseEatenAgarAmount(){
+        agarEaten++;
+    }
+
+    public void leveUp() {
+        level++;
+    }
+
 }
