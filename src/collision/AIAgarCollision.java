@@ -21,7 +21,7 @@ public class AIAgarCollision extends BasicCollisionGroup {
         fireAgarEaten(sprite, sprite1);
     }
 
-    public void fireAgarEaten(Sprite movableGameObjectSprite, Sprite agarSprite) {
+    void fireAgarEaten(Sprite movableGameObjectSprite, Sprite agarSprite) {
         for (AgarEatenListener agarEatenListener : agarEatenListeners) {
             agarEatenListener.agarEaten(movableGameObjectSprite, agarSprite);
         }

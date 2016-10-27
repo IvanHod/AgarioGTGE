@@ -24,7 +24,7 @@ public class PlayerAgarCollision extends BasicCollisionGroup {
     }
 
 
-    public void fireAgarEaten(Sprite movableGameObjectSprite, Sprite agarSprite) {
+    void fireAgarEaten(Sprite movableGameObjectSprite, Sprite agarSprite) {
         for (AgarEatenListener agarEatenListener : agarEatenListeners) {
             agarEatenListener.agarEaten(movableGameObjectSprite, agarSprite);
         }

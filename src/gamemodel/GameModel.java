@@ -25,10 +25,11 @@ import gameobject.Obstacle;
 import gameobject.PlayerBacteria;
 import listeners.AgarEatenListener;
 import listeners.LevelUpListener;
+import listeners.MovableObjectEaten;
 import listeners.RevealAgarListener;
 
 
-public class GameModel implements AgarEatenListener {
+public class GameModel implements AgarEatenListener, MovableObjectEaten {
 
     final int MAX_OBSTACLES_COUNT = 30;
 
@@ -169,7 +170,14 @@ public class GameModel implements AgarEatenListener {
     }
 
     public int getAgarEatenCount() {
+
         return agarEatenByPlayerCount;
     }
+
+    @Override
+    public void movableObjectEaten(Sprite playerBacteria, Sprite aiBacteria) {
+
+    }
+
 }
 

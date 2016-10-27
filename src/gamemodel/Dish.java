@@ -1,6 +1,8 @@
 package gamemodel;
 
 
+import com.golden.gamedev.object.Sprite;
+
 import java.util.ArrayList;
 
 import gameobject.AIBacteria;
@@ -55,6 +57,15 @@ public class Dish {
 
     public ArrayList<AIBacteria> aiBacterias() {
         return aiBacterias;
+    }
+
+    public AIBacteria aiBacteria(Sprite aiBacteriaSprite) {
+        for (AIBacteria aiBacteria : aiBacterias) {
+            if (aiBacteria.sprite() == aiBacteriaSprite) {
+                return aiBacteria;
+            }
+        }
+        return null;
     }
 
 
