@@ -103,7 +103,6 @@ public class GameModel implements AgarEatenListener {
             movableObjectController.update(mousePosition);
         }
 
-        System.out.println(dish.playerBacteria().level());
 
     }
 
@@ -122,12 +121,12 @@ public class GameModel implements AgarEatenListener {
                 }
 
                 agarRevealedCount += 10;
-
                 if (agarRevealedCount == MAX_AGAR_COUNT) {
                     exec.shutdown();
                 }
             }
         }, 1, 2, TimeUnit.SECONDS);
+
     }
 
     void fireLevelUp(Sprite movableGameObjectSprite) {

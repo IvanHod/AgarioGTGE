@@ -19,6 +19,7 @@ public class PlayerAgarCollision extends BasicCollisionGroup {
 
     @Override
     public void collided(Sprite sprite, Sprite sprite1) {
+
         fireAgarEaten(sprite, sprite1);
     }
 

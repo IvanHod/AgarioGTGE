@@ -4,7 +4,6 @@ package controller;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,9 +47,7 @@ public class AIBacteriaController extends MovableObjectController {
 
             movableGameObject.setDirection(toPlayer);
 
-        }
-
-        else {
+        } else {
 
             /*if(distanceToAgar != 0) {
                 desiredPosition = nearestAgarPos;
@@ -73,7 +70,7 @@ public class AIBacteriaController extends MovableObjectController {
 
         Map<Double, Point> distances = new HashMap<Double, Point>();
 
-        for(Agar agar : agars) {
+        for (Agar agar : agars) {
             distances.put(GameMath.distance(aiPos, agar.getPosition()), agar.getPosition());
         }
 

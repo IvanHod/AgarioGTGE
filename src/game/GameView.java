@@ -86,6 +86,7 @@ public class GameView extends Game implements RevealAgarListener, AgarEatenListe
             }
 
             for (Agar agar : dish.agar()) {
+                agar.sprite().setImmutable(true);
                 agar.sprite().setActive(false);
                 agarGroup.add(agar.sprite());
             }
@@ -150,21 +151,21 @@ public class GameView extends Game implements RevealAgarListener, AgarEatenListe
         int revealedAgar = 0;
 
         for (Sprite agarSprite : agarGroup.getSprites()) {
-            if (!agarSprite.isActive()) {
+            if (agarSprite != null && !agarSprite.isActive()) {
+
                 agarSprite.setActive(true);
                 revealedAgar++;
-            }
 
-            if (revealedAgar == 10) {
-                break;
+                if (revealedAgar == 10) {
+                    break;
+                }
             }
-
         }
     }
 
     @Override
     public void agarEaten(Sprite movableGameObjectSprite, Sprite agarSprite) {
-
+        agarSprite.setImmutable(false);
         agarGroup.remove(agarSprite);
         if (dish.playerBacteria().sprite() == movableGameObjectSprite)
             playSound("assets/sound/agar.wav");
