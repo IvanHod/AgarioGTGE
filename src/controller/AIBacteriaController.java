@@ -40,6 +40,7 @@ public class AIBacteriaController extends MovableObjectController {
         double distanceToPlayer = GameMath.distance(aiPos, playerPos);
 
         if (distanceToPlayer < AGGRO_DISTANCE) {
+
             int angle;
 
             if(otherMovableGameObject.level() <= movableGameObject.level()) {

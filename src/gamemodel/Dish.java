@@ -51,7 +51,7 @@ public class Dish {
         return playerBacteria;
     }
 
-    public void addAiBacteria(AIBacteria aiBacteria) {
+    public void addAIBacteria(AIBacteria aiBacteria) {
         aiBacterias.add(aiBacteria);
     }
 

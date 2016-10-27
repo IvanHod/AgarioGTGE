@@ -24,20 +24,24 @@ import gamemodel.GameModel;
 import gameobject.AIBacteria;
 import gameobject.Agar;
 import gameobject.Obstacle;
-import listeners.AgarEatenListener;
+import listeners.GameObjectEatenListener;
+import listeners.GameOverListener;
 import listeners.LevelUpListener;
-import listeners.MovableObjectEaten;
-import listeners.RevealAgarListener;
+import listeners.SpawnGameObjectListener;
 import utils.ImageScaler;
 
 
-public class GameView extends GameObject implements RevealAgarListener, AgarEatenListener, LevelUpListener, MovableObjectEaten {
+public class GameView extends GameObject implements SpawnGameObjectListener, GameObjectEatenListener, LevelUpListener, GameOverListener {
 
     public static final Dimension VIEWPORT = new Dimension(3000, 3000);
+
     public static final Dimension DIMENSION = new Dimension(1280, 720);
+
     public static Point initialPlayerPosition = new Point((int) (DIMENSION.getWidth() / 2),
             (int) (DIMENSION.getHeight() / 2));
+
     final String DISH_BACKGROUND_IMAGE_PATH = "assets/bg/bg.png";
+
     ImageBackground bg;
 
     PlayField pf;
@@ -56,6 +60,8 @@ public class GameView extends GameObject implements RevealAgarListener, AgarEate
 
     GameFont gameFont;
 
+    int DEBUG_AI;
+
     public GameView(GameEngine gameEngine) {
         super(gameEngine);
     }
@@ -67,13 +73,15 @@ public class GameView extends GameObject implements RevealAgarListener, AgarEate
 
         try {
 
-            this.dish = new Dish();
+            dish = new Dish();
 
-            this.gm = new GameModel(this.dish);
+            gm = new GameModel(this.dish);
 
-            gm.addAgarGeneratedListener(this);
+            gm.addSpawnGameObjectListener(this);
 
             gm.addLevelUpListener(this);
+
+            gm.addGameOverListener(this);
 
             this.bg = new ImageBackground(ImageIO.read(new File(DISH_BACKGROUND_IMAGE_PATH)));
 
@@ -102,6 +110,8 @@ public class GameView extends GameObject implements RevealAgarListener, AgarEate
             }
 
             for (AIBacteria aiBacteria : dish.aiBacterias()) {
+                aiBacteria.sprite().setImmutable(true);
+                aiBacteria.sprite().setActive(false);
                 aiBacteriaGroup.add(aiBacteria.sprite());
             }
 
@@ -133,6 +143,8 @@ public class GameView extends GameObject implements RevealAgarListener, AgarEate
 
             gameFont = fontManager.getFont(getImage("assets/font/font.fnt"));
 
+            spawnAI();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -162,17 +174,38 @@ public class GameView extends GameObject implements RevealAgarListener, AgarEate
     }
 
     @Override
-    public void revealAgar() {
+    public void spawnAgar() {
 
-        int revealedAgar = 0;
+        int spawnedAgar = 0;
 
         for (Sprite agarSprite : agarGroup.getSprites()) {
             if (agarSprite != null && !agarSprite.isActive()) {
 
                 agarSprite.setActive(true);
-                revealedAgar++;
+                spawnedAgar++;
 
-                if (revealedAgar == 10) {
+                if (spawnedAgar == 10) {
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void spawnAI() {
+
+        int spawnedAI = 0;
+
+        for(Sprite aiSprite : aiBacteriaGroup.getSprites()) {
+            if (aiSprite != null && !aiSprite.isActive()) {
+
+                aiSprite.setActive(true);
+                spawnedAI++;
+                DEBUG_AI++;
+
+                System.out.println(DEBUG_AI);
+
+                if(spawnedAI == 20) {
                     break;
                 }
             }
@@ -201,8 +234,14 @@ public class GameView extends GameObject implements RevealAgarListener, AgarEate
 
     @Override
     public void movableObjectEaten(Sprite playerBacteria, Sprite aiBacteria) {
+        aiBacteria.setImmutable(false);
+        aiBacteriaGroup.remove(aiBacteria);
+    }
+
+    @Override
+    public void gameOver() {
+        playSound("assets/sound/gameover.wav");
         parent.nextGameID = 2;
         finish();
     }
-
 }

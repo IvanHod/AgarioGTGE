@@ -23,19 +23,19 @@ import gameobject.AIBacteria;
 import gameobject.Agar;
 import gameobject.Obstacle;
 import gameobject.PlayerBacteria;
-import listeners.AgarEatenListener;
+import listeners.GameObjectEatenListener;
+import listeners.GameOverListener;
 import listeners.LevelUpListener;
-import listeners.MovableObjectEaten;
-import listeners.RevealAgarListener;
+import listeners.SpawnGameObjectListener;
 
 
-public class GameModel implements AgarEatenListener, MovableObjectEaten {
+public class GameModel implements GameObjectEatenListener {
 
     final int MAX_OBSTACLES_COUNT = 30;
 
     final int MAX_AGAR_COUNT = 500;
 
-    final int MAX_AI_BACTERIA_COUNT = 30;
+    final int MAX_AI_BACTERIA_COUNT = 100;
 
     final double PLAYER_SPEED = 0.3;
 
@@ -45,9 +45,11 @@ public class GameModel implements AgarEatenListener, MovableObjectEaten {
 
     int agarEatenByPlayerCount;
 
-    ArrayList<RevealAgarListener> revealAgarListeners = new ArrayList<>();
+    ArrayList<SpawnGameObjectListener> spawnGameObjectListeners = new ArrayList<>();
 
     ArrayList<LevelUpListener> levelUpListeners = new ArrayList<>();
+
+    ArrayList<GameOverListener> gameOverListeners = new ArrayList<>();
 
     GameObjectFactory playerBacteriaFactory = new PlayerBacteriaFactory();
 
@@ -92,10 +94,10 @@ public class GameModel implements AgarEatenListener, MovableObjectEaten {
 
             movableObjectControllers.add(new AIBacteriaController(playerBacteria, aiBacteria, dish.agar()));
 
-            dish.addAiBacteria(aiBacteria);
+            dish.addAIBacteria(aiBacteria);
         }
 
-        fireRevealAgar();
+        fireSpawnAgar();
     }
 
     public void update(Point mousePosition) {
@@ -103,30 +105,40 @@ public class GameModel implements AgarEatenListener, MovableObjectEaten {
         for (MovableObjectController movableObjectController : movableObjectControllers) {
             movableObjectController.update(mousePosition);
         }
-
-
     }
 
-    void fireRevealAgar() {
+    public int getAgarEatenCount() {
+
+        return agarEatenByPlayerCount;
+    }
+
+    void fireSpawnAgar() {
 
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(new Runnable() {
 
-            int agarRevealedCount;
+            int agarSpawnedCount;
 
             @Override
             public void run() {
 
-                for (RevealAgarListener l : revealAgarListeners) {
-                    l.revealAgar();
+                for (SpawnGameObjectListener l : spawnGameObjectListeners) {
+                    l.spawnAgar();
                 }
 
-                agarRevealedCount += 10;
-                if (agarRevealedCount == MAX_AGAR_COUNT) {
+                agarSpawnedCount += 10;
+                if (agarSpawnedCount == MAX_AGAR_COUNT) {
                     exec.shutdown();
                 }
             }
         }, 1, 2, TimeUnit.SECONDS);
+
+    }
+
+    void fireSpawnAI() {
+        for(SpawnGameObjectListener l : spawnGameObjectListeners) {
+            l.spawnAI();
+        }
 
     }
 
@@ -136,12 +148,22 @@ public class GameModel implements AgarEatenListener, MovableObjectEaten {
         }
     }
 
+    void fireGameOver() {
+        for(GameOverListener gameOverListener : gameOverListeners) {
+            gameOverListener.gameOver();
+        }
+    }
+
     public void addLevelUpListener(LevelUpListener levelUpListener) {
         levelUpListeners.add(levelUpListener);
     }
 
-    public void addAgarGeneratedListener(RevealAgarListener revealAgarListener) {
-        revealAgarListeners.add(revealAgarListener);
+    public void addSpawnGameObjectListener(SpawnGameObjectListener spawnGameObjectListener) {
+        spawnGameObjectListeners.add(spawnGameObjectListener);
+    }
+
+    public void addGameOverListener(GameOverListener gameOverListener) {
+        gameOverListeners.add(gameOverListener);
     }
 
     @Override
@@ -155,28 +177,38 @@ public class GameModel implements AgarEatenListener, MovableObjectEaten {
                 fireLevelUp(movableGameObjectSprite);
             }
         } else {
-            for (AIBacteria aiBacteria : dish.aiBacterias()) {
-                if (aiBacteria.sprite() == movableGameObjectSprite) {
-                    aiBacteria.increaseEatenAgarAmount();
 
-                    if (aiBacteria.agarEatenCount() % LEVEL_MULTIPLICATOR == 0) {
-                        aiBacteria.leveUp();
-                        fireLevelUp(movableGameObjectSprite);
-                    }
+            AIBacteria aiBacteria = dish.aiBacteria(movableGameObjectSprite);
+
+            aiBacteria.increaseEatenAgarAmount();
+
+                if (aiBacteria.agarEatenCount() % LEVEL_MULTIPLICATOR == 0) {
+                    aiBacteria.leveUp();
+                    fireLevelUp(movableGameObjectSprite);
                 }
-            }
         }
 
     }
 
-    public int getAgarEatenCount() {
-
-        return agarEatenByPlayerCount;
-    }
 
     @Override
     public void movableObjectEaten(Sprite playerBacteria, Sprite aiBacteria) {
+        if(dish.playerBacteria().level() > dish.aiBacteria(aiBacteria).level()) {
+            dish.playerBacteria().leveUp();
+            dish.playerBacteria().increaseEatenAICount();
 
+            fireLevelUp(playerBacteria);
+
+            if(dish.playerBacteria().getEatenAiCount() % 5 == 0) {
+                fireSpawnAI();
+            }
+
+
+
+        }
+        else {
+            fireGameOver();
+        }
     }
 
 }

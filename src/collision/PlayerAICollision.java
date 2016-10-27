@@ -7,14 +7,14 @@ import com.golden.gamedev.object.collision.BasicCollisionGroup;
 import java.awt.*;
 import java.util.ArrayList;
 
-import listeners.MovableObjectEaten;
+import listeners.GameObjectEatenListener;
 import utils.GameMath;
 
 public class PlayerAICollision extends BasicCollisionGroup {
 
-    final int MAX_DISTANCE_TO_EAT = 15;
+    final int MAX_DISTANCE_TO_EAT = 50;
 
-    ArrayList<MovableObjectEaten> movableObjectEatenListeners = new ArrayList<>();
+    ArrayList<GameObjectEatenListener> gameObjectEatenListeners = new ArrayList<>();
 
     public PlayerAICollision() {
 
@@ -33,13 +33,13 @@ public class PlayerAICollision extends BasicCollisionGroup {
     }
 
     void fireMovableObjectEaten(Sprite playerBacteria, Sprite aiBacteria) {
-        for (MovableObjectEaten movableObjectEatenListener : movableObjectEatenListeners) {
-            movableObjectEatenListener.movableObjectEaten(playerBacteria, aiBacteria);
+        for (GameObjectEatenListener gameObjectEatenListener : gameObjectEatenListeners) {
+            gameObjectEatenListener.movableObjectEaten(playerBacteria, aiBacteria);
         }
 
     }
 
-    public void addPlayerEatenListener(MovableObjectEaten movableObjectEatenListener) {
-        movableObjectEatenListeners.add(movableObjectEatenListener);
+    public void addPlayerEatenListener(GameObjectEatenListener movableObjectEatenListener) {
+        gameObjectEatenListeners.add(movableObjectEatenListener);
     }
 }
