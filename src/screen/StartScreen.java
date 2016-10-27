@@ -33,7 +33,6 @@ public class StartScreen extends GameObject {
 
         if (keyPressed(KeyEvent.VK_ENTER)) {
             parent.nextGameID = 1;
-
             finish();
         }
 

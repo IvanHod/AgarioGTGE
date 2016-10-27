@@ -37,21 +37,22 @@ public class AIBacteriaController extends MovableObjectController {
         Point playerPos = otherMovableGameObject.getPosition();
         Point aiPos = movableGameObject.getPosition();
 
-        //Point nearestAgarPos = findNearestAgar(aiPos);
-
-        //double distanceToAgar = GameMath.distance(aiPos, nearestAgarPos);
         double distanceToPlayer = GameMath.distance(aiPos, playerPos);
 
-        if (distanceToPlayer < AGGRO_DISTANCE && otherMovableGameObject.level() <= movableGameObject.level()) {
-            int toPlayer = GameMath.angle(movableGameObject.getPosition(), otherMovableGameObject.getPosition());
+        if (distanceToPlayer < AGGRO_DISTANCE) {
+            int angle;
 
-            movableGameObject.setDirection(toPlayer);
+            if(otherMovableGameObject.level() <= movableGameObject.level()) {
+                angle = GameMath.angle(aiPos, playerPos);
+            }
+            else {
+                angle = GameMath.angle(aiPos, GameMath.getOppositePoint(playerPos, aiPos));
+            }
+
+            movableGameObject.setDirection(angle);
 
         } else {
 
-            /*if(distanceToAgar != 0) {
-                desiredPosition = nearestAgarPos;
-            }*/
 
             if (GameMath.distance(aiPos, desiredPosition) <= 50) {
                 desiredPosition = PositionRandomizer.getRandomPosition();
@@ -61,24 +62,9 @@ public class AIBacteriaController extends MovableObjectController {
                 desiredPosition = PositionRandomizer.getRandomPosition();
             }
 
-            movableGameObject.setDirection(GameMath.angle(movableGameObject.getPosition(), desiredPosition));
+            movableGameObject.setDirection(GameMath.angle(aiPos, desiredPosition));
         }
         return true;
     }
-
-    Point findNearestAgar(Point aiPos) {
-
-        Map<Double, Point> distances = new HashMap<Double, Point>();
-
-        for (Agar agar : agars) {
-            distances.put(GameMath.distance(aiPos, agar.getPosition()), agar.getPosition());
-        }
-
-        double minDistance = Collections.min(distances.keySet());
-
-        return distances.get(minDistance);
-
-    }
-
 
 }

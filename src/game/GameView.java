@@ -81,8 +81,6 @@ public class GameView extends GameObject implements RevealAgarListener, AgarEate
 
             pf = new PlayField(bg);
 
-            playerGroup = pf.addGroup(new SpriteGroup("Player Group"));
-
             obstacleGroup = pf.addGroup(new SpriteGroup("Obstacle Group"));
 
             agarGroup = pf.addGroup(new SpriteGroup("Agar Group"));
@@ -203,7 +201,8 @@ public class GameView extends GameObject implements RevealAgarListener, AgarEate
 
     @Override
     public void movableObjectEaten(Sprite playerBacteria, Sprite aiBacteria) {
-
+        parent.nextGameID = 2;
+        finish();
     }
 
 }
