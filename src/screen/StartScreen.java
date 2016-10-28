@@ -12,19 +12,19 @@ import java.awt.event.KeyEvent;
 
 public class StartScreen extends GameObject {
 
-    final String SCREEN_BG = "assets/screens/start_screen.png";
+    final static String SCREEN_BG = "assets/screens/start_screen.png";
 
     Background bg;
 
 
     public StartScreen(GameEngine gameEngine) {
         super(gameEngine);
+        bg = new ImageBackground(getImage(SCREEN_BG));
     }
 
     @Override
     public void initResources() {
         hideCursor();
-        bg = new ImageBackground(getImage(SCREEN_BG));
     }
 
     @Override

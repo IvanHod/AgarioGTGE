@@ -2,29 +2,22 @@ package controller;
 
 
 import java.awt.*;
-import java.util.ArrayList;
 
 import gameobject.AIBacteria;
-import gameobject.Agar;
 import gameobject.PlayerBacteria;
 import utils.GameMath;
 import utils.PositionRandomizer;
 
 public class AIBacteriaController extends MovableObjectController {
 
-    final int AGGRO_DISTANCE = 300;
+    final static int AGGRO_DISTANCE = 300;
 
     Point desiredPosition;
 
-    ArrayList<Agar> agars;
-
-
-    public AIBacteriaController(PlayerBacteria playerBacteria, AIBacteria aiBacteria, ArrayList<Agar> agars) {
+    public AIBacteriaController(PlayerBacteria playerBacteria, AIBacteria aiBacteria) {
         otherMovableGameObject = playerBacteria;
         movableGameObject = aiBacteria;
         desiredPosition = PositionRandomizer.getRandomPosition();
-
-        this.agars = agars;
     }
 
     public boolean update(Point mousePosition) {

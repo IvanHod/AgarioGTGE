@@ -12,7 +12,7 @@ import utils.GameMath;
 
 public class PlayerAICollision extends BasicCollisionGroup {
 
-    final int MAX_DISTANCE_TO_EAT = 50;
+    final static int MAX_DISTANCE_TO_EAT = 50;
 
     ArrayList<GameObjectEatenListener> gameObjectEatenListeners = new ArrayList<>();
 

@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 
 public class AIBacteriaView extends GameObjectView {
 
-    final String AI_SPRITE_IMAGE_PATH = "assets/sprites/enemy/bacteria";
+    final static String AI_SPRITE_IMAGE_PATH = "assets/sprites/enemy/bacteria";
 
     public AIBacteriaView() throws IOException {
         int imageIndex = ThreadLocalRandom.current().nextInt(1, 4 + 1);

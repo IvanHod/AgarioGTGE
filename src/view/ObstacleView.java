@@ -10,7 +10,7 @@ import javax.imageio.ImageIO;
 public class ObstacleView extends GameObjectView {
 
 
-    final String OBSTACLE_SPRITE_IMAGE_PATH = "assets/sprites/obstacle/obstacle";
+    final static String OBSTACLE_SPRITE_IMAGE_PATH = "assets/sprites/obstacle/obstacle";
 
     public ObstacleView() throws IOException {
         int imageIndex = ThreadLocalRandom.current().nextInt(1, 3 + 1);

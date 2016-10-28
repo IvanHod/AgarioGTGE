@@ -37,10 +37,10 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
 
     public static final Dimension DIMENSION = new Dimension(1280, 720);
 
-    public static Point initialPlayerPosition = new Point((int) (DIMENSION.getWidth() / 2),
+    public static final Point initialPlayerPosition = new Point((int) (DIMENSION.getWidth() / 2),
             (int) (DIMENSION.getHeight() / 2));
 
-    final String DISH_BACKGROUND_IMAGE_PATH = "assets/bg/bg.png";
+    final static String DISH_BACKGROUND_IMAGE_PATH = "assets/bg/bg.png";
 
     ImageBackground bg;
 

@@ -31,17 +31,17 @@ import listeners.SpawnGameObjectListener;
 
 public class GameModel implements GameObjectEatenListener {
 
-    final int MAX_OBSTACLES_COUNT = 30;
+    final static int MAX_OBSTACLES_COUNT = 30;
 
-    final int MAX_AGAR_COUNT = 500;
+    final static int MAX_AGAR_COUNT = 500;
 
-    final int MAX_AI_BACTERIA_COUNT = 100;
+    final static int MAX_AI_BACTERIA_COUNT = 100;
 
-    final double PLAYER_SPEED = 0.3;
+    final static double PLAYER_SPEED = 0.3;
 
-    final double AI_SPEED = 0.1;
+    final static double AI_SPEED = 0.1;
 
-    final int LEVEL_MULTIPLICATOR = 5;
+    final static int LEVEL_MULTIPLICATOR = 5;
 
     int agarEatenByPlayerCount;
 
@@ -92,7 +92,7 @@ public class GameModel implements GameObjectEatenListener {
 
             aiBacteria.setDirection(ThreadLocalRandom.current().nextInt(0, 360));
 
-            movableObjectControllers.add(new AIBacteriaController(playerBacteria, aiBacteria, dish.agar()));
+            movableObjectControllers.add(new AIBacteriaController(playerBacteria, aiBacteria));
 
             dish.addAIBacteria(aiBacteria);
         }

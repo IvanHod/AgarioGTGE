@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 public class AgarView extends GameObjectView {
 
 
-    final String AGAR_SPRITE_IMAGE_PATH = "assets/sprites/agar/agar.png";
+    final static String AGAR_SPRITE_IMAGE_PATH = "assets/sprites/agar/agar.png";
 
     public AgarView() throws IOException {
         gameObjectImage = ImageIO.read(new File(AGAR_SPRITE_IMAGE_PATH));

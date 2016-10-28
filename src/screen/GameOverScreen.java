@@ -12,19 +12,20 @@ import java.awt.event.KeyEvent;
 public class GameOverScreen extends GameObject {
 
 
-    final String SCREEN_BG = "assets/screens/gameover_screen.png";
+    final static String SCREEN_BG = "assets/screens/gameover_screen.png";
 
     Background bg;
 
 
     public GameOverScreen(GameEngine gameEngine) {
         super(gameEngine);
+
+        bg = new ImageBackground(getImage(SCREEN_BG));
     }
 
     @Override
     public void initResources() {
         hideCursor();
-        bg = new ImageBackground(getImage(SCREEN_BG));
     }
 
     @Override
