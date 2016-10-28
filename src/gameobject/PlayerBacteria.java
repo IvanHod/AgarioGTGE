@@ -15,7 +15,7 @@ public class PlayerBacteria extends MovableGameObject {
         return eatenAICount;
     }
 
-    public void increaseEatenAICount(){
+    public void increaseEatenAICount() {
         eatenAICount++;
     }
 

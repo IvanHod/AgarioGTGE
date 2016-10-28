@@ -3,9 +3,6 @@ package controller;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import gameobject.AIBacteria;
 import gameobject.Agar;
@@ -43,10 +40,9 @@ public class AIBacteriaController extends MovableObjectController {
 
             int angle;
 
-            if(otherMovableGameObject.level() <= movableGameObject.level()) {
+            if (otherMovableGameObject.level() <= movableGameObject.level()) {
                 angle = GameMath.angle(aiPos, playerPos);
-            }
-            else {
+            } else {
                 angle = GameMath.angle(aiPos, GameMath.getOppositePoint(playerPos, aiPos));
             }
 

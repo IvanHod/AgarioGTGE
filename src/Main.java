@@ -1,7 +1,5 @@
 import com.golden.gamedev.GameLoader;
 
-import java.awt.*;
-
 import game.GameView;
 
 

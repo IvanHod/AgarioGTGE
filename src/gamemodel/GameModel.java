@@ -136,7 +136,7 @@ public class GameModel implements GameObjectEatenListener {
     }
 
     void fireSpawnAI() {
-        for(SpawnGameObjectListener l : spawnGameObjectListeners) {
+        for (SpawnGameObjectListener l : spawnGameObjectListeners) {
             l.spawnAI();
         }
 
@@ -149,7 +149,7 @@ public class GameModel implements GameObjectEatenListener {
     }
 
     void fireGameOver() {
-        for(GameOverListener gameOverListener : gameOverListeners) {
+        for (GameOverListener gameOverListener : gameOverListeners) {
             gameOverListener.gameOver();
         }
     }
@@ -182,10 +182,10 @@ public class GameModel implements GameObjectEatenListener {
 
             aiBacteria.increaseEatenAgarAmount();
 
-                if (aiBacteria.agarEatenCount() % LEVEL_MULTIPLICATOR == 0) {
-                    aiBacteria.leveUp();
-                    fireLevelUp(movableGameObjectSprite);
-                }
+            if (aiBacteria.agarEatenCount() % LEVEL_MULTIPLICATOR == 0) {
+                aiBacteria.leveUp();
+                fireLevelUp(movableGameObjectSprite);
+            }
         }
 
     }
@@ -193,20 +193,19 @@ public class GameModel implements GameObjectEatenListener {
 
     @Override
     public void movableObjectEaten(Sprite playerBacteria, Sprite aiBacteria) {
-        if(dish.playerBacteria().level() > dish.aiBacteria(aiBacteria).level()) {
-            dish.playerBacteria().leveUp();
+        if (dish.playerBacteria().level() > dish.aiBacteria(aiBacteria).level()) {
+
             dish.playerBacteria().increaseEatenAICount();
 
-            fireLevelUp(playerBacteria);
-
-            if(dish.playerBacteria().getEatenAiCount() % 5 == 0) {
-                fireSpawnAI();
+            if (dish.playerBacteria().getEatenAiCount() % 3 == 0) {
+                dish.playerBacteria().leveUp();
+                fireLevelUp(playerBacteria);
             }
 
-
-
-        }
-        else {
+            if (dish.playerBacteria().getEatenAiCount() % 5 == 0) {
+                fireSpawnAI();
+            }
+        } else {
             fireGameOver();
         }
     }

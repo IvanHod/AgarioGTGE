@@ -60,8 +60,6 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
 
     GameFont gameFont;
 
-    int DEBUG_AI;
-
     public GameView(GameEngine gameEngine) {
         super(gameEngine);
     }
@@ -163,7 +161,8 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
         pf.render(g);
         bg.setToCenter(dish.playerBacteria().sprite());
 
-        gameFont.drawString(g, "AGAR COUNT: " + String.valueOf(gm.getAgarEatenCount()), 9, 9);
+        gameFont.drawString(g, "AGAR COUNT: " + gm.getAgarEatenCount() +
+                "  PLAYER LEVEL: " + dish.playerBacteria().level(), 9, 9);
     }
 
     Point mousePosition() {
@@ -196,16 +195,13 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
 
         int spawnedAI = 0;
 
-        for(Sprite aiSprite : aiBacteriaGroup.getSprites()) {
+        for (Sprite aiSprite : aiBacteriaGroup.getSprites()) {
             if (aiSprite != null && !aiSprite.isActive()) {
 
                 aiSprite.setActive(true);
                 spawnedAI++;
-                DEBUG_AI++;
 
-                System.out.println(DEBUG_AI);
-
-                if(spawnedAI == 20) {
+                if (spawnedAI == 20) {
                     break;
                 }
             }
