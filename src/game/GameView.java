@@ -232,6 +232,7 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
     public void movableObjectEaten(Sprite playerBacteria, Sprite aiBacteria) {
         aiBacteria.setImmutable(false);
         aiBacteriaGroup.remove(aiBacteria);
+        playSound("assets/sound/ai.wav");
     }
 
     @Override
