@@ -39,7 +39,7 @@ public class GameModel implements GameObjectEatenListener {
 
     final static double PLAYER_SPEED = 0.3;
 
-    final static double AI_SPEED = 0.1;
+    final static double AI_SPEED = 0.2;
 
     final static int LEVEL_MULTIPLICATOR = 5;
 
@@ -187,6 +187,7 @@ public class GameModel implements GameObjectEatenListener {
                 fireLevelUp(movableGameObjectSprite);
             }
         }
+        dish.removeAgar(agarSprite);
 
     }
 
@@ -205,6 +206,7 @@ public class GameModel implements GameObjectEatenListener {
             if (dish.playerBacteria().getEatenAiCount() % 5 == 0) {
                 fireSpawnAI();
             }
+            dish.removeAIBacteria(aiBacteria);
         } else {
             fireGameOver();
         }

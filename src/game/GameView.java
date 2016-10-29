@@ -212,6 +212,7 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
     public void agarEaten(Sprite movableGameObjectSprite, Sprite agarSprite) {
         agarSprite.setImmutable(false);
         agarGroup.remove(agarSprite);
+
         if (dish.playerBacteria().sprite() == movableGameObjectSprite)
             playSound("assets/sound/agar.wav");
 
@@ -230,9 +231,12 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
 
     @Override
     public void movableObjectEaten(Sprite playerBacteria, Sprite aiBacteria) {
-        aiBacteria.setImmutable(false);
-        aiBacteriaGroup.remove(aiBacteria);
-        playSound("assets/sound/ai.wav");
+        if (dish.playerBacteria().level() > dish.aiBacteria(aiBacteria).level()) {
+            aiBacteria.setImmutable(false);
+            aiBacteriaGroup.remove(aiBacteria);
+
+            playSound("assets/sound/ai.wav");
+        }
     }
 
     @Override

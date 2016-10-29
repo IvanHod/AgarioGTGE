@@ -68,5 +68,13 @@ public class Dish {
         return null;
     }
 
+    public void removeAgar(Sprite agarSprite) {
+        agars.removeIf(agar -> agar.sprite() == agarSprite);
+    }
+
+    public void removeAIBacteria(Sprite aiBacteriaSprite) {
+        aiBacterias.removeIf(aiBacteria -> aiBacteria.sprite() == aiBacteriaSprite);
+    }
+
 
 }
