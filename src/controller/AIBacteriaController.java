@@ -87,6 +87,8 @@ public class AIBacteriaController extends BacteriaController {
                 // ... иначе, уходить от игрока
 
                 angle = GameMath.angle(aiPos, GameMath.getOppositePoint(playerPos, aiPos));
+
+                desiredPosition = PositionRandomizer.getRandomPosition();
             }
 
             // Следовать к выбранной конечной точке движения
@@ -95,7 +97,7 @@ public class AIBacteriaController extends BacteriaController {
 
         // .. иначе
 
-        else {
+        else  {
 
             // Если расстояние до конечной точки движения менее определенной границы ...
 
