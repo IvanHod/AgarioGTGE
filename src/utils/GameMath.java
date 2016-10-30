@@ -3,6 +3,9 @@ package utils;
 
 import java.awt.*;
 
+/**
+ * Математика для расчета движения объектов игры
+ */
 public class GameMath {
 
     /**

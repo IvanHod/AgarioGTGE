@@ -4,8 +4,19 @@ package utils;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * Инструмент масштабирования изображений
+ */
 public class ImageScaler {
 
+    /**
+     * Масштабирует исходное изображение
+     *
+     * @param before исходное изображение
+     * @param scaleX значение масштаба по X
+     * @param scaleY значение масштаба по Y
+     * @return масштабированное изображение
+     */
     public static BufferedImage scaleImage(BufferedImage before, int scaleX, int scaleY) {
 
 

@@ -7,9 +7,16 @@ import gameobject.GameObject;
 import gameobject.PlayerBacteria;
 import view.PlayerBacteriaView;
 
-
+/**
+ * Фабрика Бактерий игрока
+ */
 public class PlayerBacteriaFactory extends GameObjectFactory {
 
+    /**
+     * Создает объект Бактерии игрока
+     *
+     * @return объект Бактерии игрока
+     */
     @Override
     public GameObject createGameObject() {
 

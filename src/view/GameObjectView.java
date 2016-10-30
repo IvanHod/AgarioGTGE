@@ -4,21 +4,33 @@ import com.golden.gamedev.object.Sprite;
 
 import java.awt.image.BufferedImage;
 
-
+/**
+ * Представление объекта игры
+ */
 public abstract class GameObjectView {
 
-    BufferedImage gameObjectImage;
+    /**
+     * Изображение объекта игры
+     */
+    protected BufferedImage gameObjectImage;
 
-    Sprite gameObjectSprite;
+    /**
+     * Спрайт объекта игры
+     */
+    protected Sprite gameObjectSprite;
 
+    /**
+     * Конструктор класса без параметров
+     */
     protected GameObjectView() {
         gameObjectSprite = new Sprite();
     }
 
-    public BufferedImage getObjectImage() {
-        return gameObjectImage;
-    }
-
+    /**
+     * Возвращает спрайт объекта игры
+     *
+     * @return спрайт объекта игры
+     */
     public Sprite getObjectSprite() {
         return gameObjectSprite;
     }

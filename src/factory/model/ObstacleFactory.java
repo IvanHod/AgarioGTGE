@@ -10,12 +10,26 @@ import gameobject.Obstacle;
 import utils.PositionRandomizer;
 import view.ObstacleView;
 
+/**
+ * Фабрика Препятствий
+ */
 public class ObstacleFactory extends GameObjectFactory {
 
-    Point position;
+    /**
+     * Позиция созданного Препятствия на поле
+     */
+    private Point position;
 
-    ObstacleView obstacleView;
+    /**
+     * Представление Препятствия
+     */
+    private ObstacleView obstacleView;
 
+    /**
+     * Создает объект Препятствия
+     *
+     * @return объект Препятствия
+     */
     @Override
     public GameObject createGameObject() {
 
@@ -25,8 +39,9 @@ public class ObstacleFactory extends GameObjectFactory {
             e.printStackTrace();
         }
 
-        position = PositionRandomizer.getRandomPosition();
+        // Генерация случайной позиции Препятствия на игровом поле
 
+        position = PositionRandomizer.getRandomPosition();
         obstacleView.getObjectSprite().setX(position.x);
         obstacleView.getObjectSprite().setY(position.y);
 

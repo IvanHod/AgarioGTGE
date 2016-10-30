@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import controller.AIBacteriaController;
-import controller.MovableObjectController;
+import controller.BacteriaController;
 import controller.PlayerBacteriaController;
 import factory.GameObjectFactory;
 import factory.model.AIBacteriaFactory;
@@ -28,91 +28,312 @@ import listeners.GameOverListener;
 import listeners.LevelUpListener;
 import listeners.SpawnGameObjectListener;
 
-
+/**
+ * Модель игры (содержит правила игры и её ход)
+ */
 public class GameModel implements GameObjectEatenListener {
 
-    final static int MAX_OBSTACLES_COUNT = 30;
+    /**
+     * Скорость Бактерии Игрока
+     */
+    public final static double PLAYER_SPEED = 0.3;
+    /**
+     * Количество Агара заспавненного за 1 раз
+     */
+    public final static int AGAR_SPAWN_PORTION = 10;
+    /**
+     * Количество ИИБактерий заспавненных за 1 раз
+     */
+    public final static int MAX_AIBACTERIA_SPAWN_PORTION = 20;
+    /**
+     * Максимальное количество Препятствий
+     */
+    private final static int MAX_OBSTACLES_COUNT = 30;
+    /**
+     * Максимальное количество Агара
+     */
+    private final static int MAX_AGAR_COUNT = 500;
+    /**
+     * Промежуток в секундах, по истечении которого Агар спавнится на поле
+     */
+    private final static int AGAR_SPAWN_TIMEOUT = 2;
+    /**
+     * Максимальное количество ИИБактерий
+     */
+    private final static int MAX_AIBACTERIA_COUNT = 100;
+    /**
+     * Скорость ИИБактерии
+     */
+    private final static double AI_SPEED = 0.2;
 
-    final static int MAX_AGAR_COUNT = 500;
+    /**
+     * Количество Агара, которое нужно съесть Бактерии для достижения следующего уровня
+     */
+    private final static int AGAR_EATEN_COUNT_TO_NEXT_LEVEL = 5;
 
-    final static int MAX_AI_BACTERIA_COUNT = 100;
+    /**
+     * Количество ИИБактерий, которое нужно съесть Бактерии игрока для достижения следующего уровня
+     */
+    private final static int AIBACTERIA_EATEN_COUNT_TO_NEXT_LEVEL = 3;
 
-    final static double PLAYER_SPEED = 0.3;
+    /**
+     * Количество ИИБактерий, которые нужно съесть, чтобы заспавнились нвоые ИИБактерии
+     */
+    private final static int EATEN_AIBACTERIA_TO_NEXT_SPAWN = 5;
 
-    final static double AI_SPEED = 0.2;
+    /**
+     * Слушатели сигнала SpawnGameObject, говорящего о том, что нужно заспавнить определенное
+     * количество игровых объектов
+     */
+    private ArrayList<SpawnGameObjectListener> spawnGameObjectListeners = new ArrayList<>();
 
-    final static int LEVEL_MULTIPLICATOR = 5;
+    /**
+     * Слушатели сигнала LevelUp, говорящего о том, что нужно повысить уровень определенным объектам
+     */
+    private ArrayList<LevelUpListener> levelUpListeners = new ArrayList<>();
 
-    int agarEatenByPlayerCount;
+    /**
+     * Слушатели сигнала GameOver, говорящего о том, нужно закончить игру
+     */
+    private ArrayList<GameOverListener> gameOverListeners = new ArrayList<>();
 
-    ArrayList<SpawnGameObjectListener> spawnGameObjectListeners = new ArrayList<>();
+    /**
+     * Фабрика объектов Игрока
+     */
+    private GameObjectFactory playerBacteriaFactory = new PlayerBacteriaFactory();
 
-    ArrayList<LevelUpListener> levelUpListeners = new ArrayList<>();
+    /**
+     * Фабрика объектов Препятствий
+     */
+    private GameObjectFactory obstacleFactory = new ObstacleFactory();
 
-    ArrayList<GameOverListener> gameOverListeners = new ArrayList<>();
+    /**
+     * Фабрика объектов Агара
+     */
+    private GameObjectFactory agarFactory = new AgarFactory();
 
-    GameObjectFactory playerBacteriaFactory = new PlayerBacteriaFactory();
+    /**
+     * Фабрика объектов ИИБактерий
+     */
+    private GameObjectFactory aiBacteraiFactory = new AIBacteriaFactory();
 
-    GameObjectFactory obstacleFactory = new ObstacleFactory();
+    /**
+     * Контроллеры Бактерий
+     */
+    private ArrayList<BacteriaController> bacteriaControllers = new ArrayList<>();
 
-    GameObjectFactory agarFactory = new AgarFactory();
+    /**
+     * Чашка Петри
+     */
+    private Dish dish;
 
-    GameObjectFactory aiBacteraiFactory = new AIBacteriaFactory();
-
-    ArrayList<MovableObjectController> movableObjectControllers = new ArrayList<>();
-
-    Dish dish;
-
+    /**
+     * Конструктор класса с параметрами
+     *
+     * @param dish Чашка Петри
+     */
     public GameModel(Dish dish) throws IOException {
 
         this.dish = dish;
 
+        // Создать Бактерию игрока ...
+
         PlayerBacteria playerBacteria = (PlayerBacteria) playerBacteriaFactory.createGameObject();
 
-        movableObjectControllers.add(new PlayerBacteriaController(playerBacteria));
+        // ... добавить ей контроллер
+
+        bacteriaControllers.add(new PlayerBacteriaController(playerBacteria));
+
+        // ... установить скорость
 
         playerBacteria.setSpeed(PLAYER_SPEED);
 
+        // ... установить начальную позицию
+
         playerBacteria.setPosition(GameView.initialPlayerPosition);
 
+        // ... добавить в Чашку Петри
+
         dish.addPlayerBacteria(playerBacteria);
+
+        // Создать Агар и добавить его в Чашку Петри
 
         for (int i = 0; i < MAX_OBSTACLES_COUNT; i++) {
             dish.addObstacle((Obstacle) obstacleFactory.createGameObject());
         }
 
+        // Создать препятствия и добавить их в Чашку Петри
+
         for (int i = 0; i < MAX_AGAR_COUNT; i++) {
             dish.addAgar(((Agar) agarFactory.createGameObject()));
         }
 
-        for (int i = 0; i < MAX_AI_BACTERIA_COUNT; i++) {
+        // Для ИИБактерии выполнить аналогичную Бактерии Игрока процедуру
+
+        for (int i = 0; i < MAX_AIBACTERIA_COUNT; i++) {
             AIBacteria aiBacteria = (AIBacteria) aiBacteraiFactory.createGameObject();
 
             aiBacteria.setSpeed(AI_SPEED);
 
             aiBacteria.setDirection(ThreadLocalRandom.current().nextInt(0, 360));
 
-            movableObjectControllers.add(new AIBacteriaController(playerBacteria, aiBacteria));
+            bacteriaControllers.add(new AIBacteriaController(playerBacteria, aiBacteria));
 
             dish.addAIBacteria(aiBacteria);
         }
 
+        // Отправить сигнал спавна Агара
+
         fireSpawnAgar();
     }
 
+    /**
+     * Обновляет все контроллеры игры
+     *
+     * @param mousePosition позиция мыши на поле
+     */
     public void update(Point mousePosition) {
 
-        for (MovableObjectController movableObjectController : movableObjectControllers) {
-            movableObjectController.update(mousePosition);
+        for (BacteriaController bacteriaController : bacteriaControllers) {
+            bacteriaController.update(mousePosition);
         }
     }
 
-    public int getAgarEatenCount() {
-
-        return agarEatenByPlayerCount;
+    /**
+     * Добавляет слушателя сигнала LevelUp
+     *
+     * @param levelUpListener слушатель сигнала LevelUp
+     */
+    public void addLevelUpListener(LevelUpListener levelUpListener) {
+        levelUpListeners.add(levelUpListener);
     }
 
-    void fireSpawnAgar() {
+    /**
+     * Добавляет слушателя сигнала SpawnGameObject
+     *
+     * @param spawnGameObjectListener слушатель сигнала SpawnGameObject
+     */
+    public void addSpawnGameObjectListener(SpawnGameObjectListener spawnGameObjectListener) {
+        spawnGameObjectListeners.add(spawnGameObjectListener);
+    }
+
+    /**
+     * Добавляет слушателя сигнала GameOver
+     *
+     * @param gameOverListener слушатель сигнала GameOver
+     */
+    public void addGameOverListener(GameOverListener gameOverListener) {
+        gameOverListeners.add(gameOverListener);
+    }
+
+    /**
+     * Принимает сигнал AgarEaten (Агар съеден Бактерией)
+     *
+     * @param bacteriaSprite спрайт Бактерии игрока
+     * @param agarSprite     спрайт Агара
+     */
+    @Override
+    public void agarEaten(Sprite bacteriaSprite, Sprite agarSprite) {
+
+        // Если Бактерия игрока съела Агар ...
+
+        if (dish.playerBacteria().sprite() == bacteriaSprite) {
+
+            // ... увеличить кол-во съеденного Бактерией игрока Агара
+
+            dish.playerBacteria().increaseEatenAgarAmount();
+
+            // ... если Бактерия игрока съела достаточно Агара для перехода на следующий уровень ...
+
+            if (dish.playerBacteria().agarEatenCount() % AGAR_EATEN_COUNT_TO_NEXT_LEVEL == 0) {
+
+                // ... повысить уровень Бактерии игрока и отправить об этом сигнал
+
+                dish.playerBacteria().levelUp();
+                fireLevelUp(bacteriaSprite);
+            }
+        }
+
+        // ... иначе ...
+
+        else {
+
+            AIBacteria aiBacteria = dish.aiBacteria(bacteriaSprite);
+
+            // ... увеличить кол-во съеденного ИИБактерией Агара
+
+            aiBacteria.increaseEatenAgarAmount();
+
+            // ... если ИИБактерия съела достаточно Агара для перехода на следующий уровень ...
+
+            if (aiBacteria.agarEatenCount() % AGAR_EATEN_COUNT_TO_NEXT_LEVEL == 0) {
+
+                // ... повысить уровень Бактерии игрока и отправить об этом сигнал
+
+                aiBacteria.levelUp();
+                fireLevelUp(bacteriaSprite);
+            }
+        }
+
+        // Удалить съеденный Агар из Чашки Петри
+
+        dish.removeAgar(agarSprite);
+    }
+
+    /**
+     * Принимает сигнал BacteriaEaten (одна Бактерия съела другую Бактерию)
+     *
+     * @param playerBacteria спрайт Бактерии игрока
+     * @param aiBacteria     спрайт ИИБактерии
+     */
+    @Override
+    public void bacteriaEaten(Sprite playerBacteria, Sprite aiBacteria) {
+
+        // Если Бактерия игрока съела ИИБактерию (уровень Бактерии игрока больше
+        // уровня ИИБактерии) ...
+
+        if (dish.playerBacteria().level() > dish.aiBacteria(aiBacteria).level()) {
+
+            // ... увеличиить кол-во съеденных Бактерией игрока ИИБактерий
+
+            dish.playerBacteria().increaseEatenAICount();
+
+            // ... если Бактерия игрока съела достаточно ИИБактерий для перехода на следующий уровень ...
+
+            if (dish.playerBacteria().getEatenAiCount() % AIBACTERIA_EATEN_COUNT_TO_NEXT_LEVEL == 0) {
+
+                // ... повысить уровень Бактерии игрока и отправить об этом сигнал
+
+                dish.playerBacteria().levelUp();
+                fireLevelUp(playerBacteria);
+            }
+
+            // ... если Бактерия игрока съела достаточно ИИБактерий для следующего спавна ...
+            if (dish.playerBacteria().getEatenAiCount() % EATEN_AIBACTERIA_TO_NEXT_SPAWN == 0) {
+
+                // ... отправить сигнал спавна ИИБактерий
+
+                fireSpawnAI();
+            }
+
+            // Удалить съеденную ИИБактерию из Чашки Петри
+
+            dish.removeAIBacteria(aiBacteria);
+        }
+
+        // ... иначе ...
+        else {
+
+            // ... бактерию игрока съели, поэтому пускам сигнал завершения игры
+
+            fireGameOver();
+        }
+    }
+
+    /**
+     * Периодически (каждые 2 секунды) отправляет сигнал спавна Агара
+     */
+    private void fireSpawnAgar() {
 
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(new Runnable() {
@@ -126,89 +347,43 @@ public class GameModel implements GameObjectEatenListener {
                     l.spawnAgar();
                 }
 
-                agarSpawnedCount += 10;
+                agarSpawnedCount += AGAR_SPAWN_PORTION;
+
                 if (agarSpawnedCount == MAX_AGAR_COUNT) {
                     exec.shutdown();
                 }
             }
-        }, 1, 2, TimeUnit.SECONDS);
+        }, 1, AGAR_SPAWN_TIMEOUT, TimeUnit.SECONDS);
 
     }
 
-    void fireSpawnAI() {
+    /**
+     * Отправляет сигнал спавна ИИБактерий
+     */
+    private void fireSpawnAI() {
         for (SpawnGameObjectListener l : spawnGameObjectListeners) {
             l.spawnAI();
         }
 
     }
 
-    void fireLevelUp(Sprite movableGameObjectSprite) {
+    /**
+     * Отправляет сигнал повышения уровня Бактерии
+     *
+     * @param bacteriaSprite спрайт Бактерии, дял которой следует повысить уровень
+     */
+    private void fireLevelUp(Sprite bacteriaSprite) {
         for (LevelUpListener levelUpListener : levelUpListeners) {
-            levelUpListener.levelIncreased(movableGameObjectSprite);
+            levelUpListener.levelIncreased(bacteriaSprite);
         }
     }
 
-    void fireGameOver() {
+    /**
+     * Отправляет сигнал завершения игры
+     */
+    private void fireGameOver() {
         for (GameOverListener gameOverListener : gameOverListeners) {
             gameOverListener.gameOver();
-        }
-    }
-
-    public void addLevelUpListener(LevelUpListener levelUpListener) {
-        levelUpListeners.add(levelUpListener);
-    }
-
-    public void addSpawnGameObjectListener(SpawnGameObjectListener spawnGameObjectListener) {
-        spawnGameObjectListeners.add(spawnGameObjectListener);
-    }
-
-    public void addGameOverListener(GameOverListener gameOverListener) {
-        gameOverListeners.add(gameOverListener);
-    }
-
-    @Override
-    public void agarEaten(Sprite movableGameObjectSprite, Sprite agarSprite) {
-
-        if (dish.playerBacteria().sprite() == movableGameObjectSprite) {
-            dish.playerBacteria().increaseEatenAgarAmount();
-            agarEatenByPlayerCount++;
-            if (dish.playerBacteria().agarEatenCount() % LEVEL_MULTIPLICATOR == 0) {
-                dish.playerBacteria().leveUp();
-                fireLevelUp(movableGameObjectSprite);
-            }
-        } else {
-
-            AIBacteria aiBacteria = dish.aiBacteria(movableGameObjectSprite);
-
-            aiBacteria.increaseEatenAgarAmount();
-
-            if (aiBacteria.agarEatenCount() % LEVEL_MULTIPLICATOR == 0) {
-                aiBacteria.leveUp();
-                fireLevelUp(movableGameObjectSprite);
-            }
-        }
-        dish.removeAgar(agarSprite);
-
-    }
-
-
-    @Override
-    public void movableObjectEaten(Sprite playerBacteria, Sprite aiBacteria) {
-        if (dish.playerBacteria().level() > dish.aiBacteria(aiBacteria).level()) {
-
-            dish.playerBacteria().increaseEatenAICount();
-
-            if (dish.playerBacteria().getEatenAiCount() % 3 == 0) {
-                dish.playerBacteria().leveUp();
-                fireLevelUp(playerBacteria);
-            }
-
-            if (dish.playerBacteria().getEatenAiCount() % 5 == 0) {
-                fireSpawnAI();
-            }
-            dish.removeAIBacteria(aiBacteria);
-        } else {
-            fireGameOver();
         }
     }
 

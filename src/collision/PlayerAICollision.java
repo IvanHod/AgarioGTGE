@@ -10,36 +10,74 @@ import java.util.ArrayList;
 import listeners.GameObjectEatenListener;
 import utils.GameMath;
 
+/**
+ * Менеджер коллизий Бактерии игрока и ИИБактерии
+ */
 public class PlayerAICollision extends BasicCollisionGroup {
 
-    final static int MAX_DISTANCE_TO_EAT = 50;
+    /**
+     * Максимальное расстояние между Бактериями, при достижении которого возможно "поедание" одной
+     * бактерией другой
+     */
+    private final static int DISTANCE_TO_EAT = 50;
 
-    ArrayList<GameObjectEatenListener> gameObjectEatenListeners = new ArrayList<>();
+    /**
+     * Слушатели сигнала GameObjectEaten говорящего о том, что был съеден какой-либо объект игры
+     */
+    private ArrayList<GameObjectEatenListener> gameObjectEatenListeners = new ArrayList<>();
 
+    /**
+     * Конструктор класса менеджера коллизий
+     */
     public PlayerAICollision() {
 
         pixelPerfectCollision = true;
     }
 
+    /**
+     * Метод выполняется при коллизии Бактерии игрока с ИИБактерией
+     *
+     * @param sprite  спрайт Бактерии игрока
+     * @param sprite1 спрайт ИИБактерии
+     */
     @Override
     public void collided(Sprite sprite, Sprite sprite1) {
 
+        // Позиции Бактерии игрока и ИИБактерии на поле во время коллизии
+
         Point playerPosition = new Point((int) sprite.getX(), (int) sprite.getY());
         Point aiPosition = new Point((int) sprite1.getX(), (int) sprite1.getY());
-        if (GameMath.distance(playerPosition, aiPosition) <= MAX_DISTANCE_TO_EAT) {
-            fireMovableObjectEaten(sprite, sprite1);
+
+        // Если расстояние между бактериями позволяет одной Бактерии съесть другую...
+
+        if (GameMath.distance(playerPosition, aiPosition) <= DISTANCE_TO_EAT) {
+
+            // ... отправить сигнал о том, что одна Бактерия съела другую
+
+            fireBacteriaEaten(sprite, sprite1);
         }
 
     }
 
-    void fireMovableObjectEaten(Sprite playerBacteria, Sprite aiBacteria) {
+    /**
+     * Добавляет слушателя сигнала GameObjectEaten
+     *
+     * @param bacteriaEatenListener слушатель сигнала GameObjectEaten
+     */
+    public void addPlayerEatenListener(GameObjectEatenListener bacteriaEatenListener) {
+        gameObjectEatenListeners.add(bacteriaEatenListener);
+    }
+
+    /**
+     * Сообщает всем слушателям о том, что одна бактерия съела другую
+     *
+     * @param playerBacteria спрайт Бактерии игрока
+     * @param aiBacteria     спрайт ИИБактерии
+     */
+    private void fireBacteriaEaten(Sprite playerBacteria, Sprite aiBacteria) {
         for (GameObjectEatenListener gameObjectEatenListener : gameObjectEatenListeners) {
-            gameObjectEatenListener.movableObjectEaten(playerBacteria, aiBacteria);
+            gameObjectEatenListener.bacteriaEaten(playerBacteria, aiBacteria);
         }
 
-    }
-
-    public void addPlayerEatenListener(GameObjectEatenListener movableObjectEatenListener) {
-        gameObjectEatenListeners.add(movableObjectEatenListener);
     }
 }

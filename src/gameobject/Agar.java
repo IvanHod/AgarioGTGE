@@ -1,22 +1,19 @@
 package gameobject;
 
-import java.awt.*;
-
 import view.AgarView;
 
+/**
+ * Агар
+ */
 public class Agar extends GameObject {
 
-
+    /**
+     * Конструктор класса с параметром
+     *
+     * @param agarView представление Агара
+     */
     public Agar(AgarView agarView) {
 
         gameObjectView = agarView;
     }
-
-    public Point getPosition() {
-        Point position = new Point();
-        position.x = (int) (this.sprite().getX());
-        position.y = (int) (this.sprite().getY());
-        return position;
-    }
-
 }

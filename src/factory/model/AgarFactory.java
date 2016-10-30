@@ -9,12 +9,26 @@ import gameobject.GameObject;
 import utils.PositionRandomizer;
 import view.AgarView;
 
+/**
+ * Фабрика Агара
+ */
 public class AgarFactory extends GameObjectFactory {
 
-    Point position;
+    /**
+     * Позиция созданного Агара на поле
+     */
+    private Point position;
 
-    AgarView agarView;
+    /**
+     * Представление Агара
+     */
+    private AgarView agarView;
 
+    /**
+     * Создает объект Агара
+     *
+     * @return объект Агара
+     */
     @Override
     public GameObject createGameObject() {
 
@@ -26,8 +40,9 @@ public class AgarFactory extends GameObjectFactory {
             e.printStackTrace();
         }
 
-        position = PositionRandomizer.getRandomPosition();
+        // Генерация случайной позиции Агара на игровом поле
 
+        position = PositionRandomizer.getRandomPosition();
         agarView.getObjectSprite().setX(position.x);
         agarView.getObjectSprite().setY(position.y);
 

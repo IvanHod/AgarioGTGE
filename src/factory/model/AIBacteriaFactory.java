@@ -10,12 +10,26 @@ import gameobject.GameObject;
 import utils.PositionRandomizer;
 import view.AIBacteriaView;
 
+/**
+ * Фабрика ИИБактерий
+ */
 public class AIBacteriaFactory extends GameObjectFactory {
 
-    Point position;
+    /**
+     * Позиция созданной ИИБактерии на поле
+     */
+    private Point position;
 
-    AIBacteriaView aiBacteriaView;
+    /**
+     * Представление ИИБактерии
+     */
+    private AIBacteriaView aiBacteriaView;
 
+    /**
+     * Создает объект ИИБактерии
+     *
+     * @return объект ИИБактерии
+     */
     @Override
     public GameObject createGameObject() {
 
@@ -25,8 +39,9 @@ public class AIBacteriaFactory extends GameObjectFactory {
             e.printStackTrace();
         }
 
-        position = PositionRandomizer.getRandomPosition();
+        // Генерация случайной позиции ИИБактерии на игровом поле
 
+        position = PositionRandomizer.getRandomPosition();
         aiBacteriaView.getObjectSprite().setX(position.x);
         aiBacteriaView.getObjectSprite().setY(position.y);
 
