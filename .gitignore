@@ -58,3 +58,9 @@ hs_err_pid*
 
 /libs/
 
+*.xml
+build/
+manifest.mf
+nbproject/
+src/AgarIoV2.java
+src/AgarIOGame.java
