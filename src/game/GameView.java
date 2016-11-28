@@ -1,5 +1,6 @@
 package game;
 
+import collision.AIAICollision;
 import com.golden.gamedev.GameEngine;
 import com.golden.gamedev.GameObject;
 import com.golden.gamedev.object.GameFont;
@@ -24,6 +25,7 @@ import gamemodel.GameModel;
 import gameobject.AIBacteria;
 import gameobject.Agar;
 import gameobject.Obstacle;
+import java.util.ArrayList;
 import listeners.GameObjectEatenListener;
 import listeners.GameOverListener;
 import listeners.LevelUpListener;
@@ -109,23 +111,10 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
     /**
      * Группы спрайтов: Бактерии игрока, Препятствий, Агара, ИИБактерий
      */
-    private SpriteGroup playerGroup, obstacleGroup, agarGroup, aiBacteriaGroup;
-
-    /**
-     * Менеджер коллизий Бактерии игрока с Агаром
-     */
-    private PlayerAgarCollision playerAgarCollision;
-
-    /**
-     * Менеджер коллизий ИИБактерии с Агаром
-     */
-    private AIAgarCollision aiAgarCollision;
-
-    /**
-     * Менеджер коллизий Бактерии игрока и ИИБактерии
-     */
-    private PlayerAICollision playerAICollision;
-
+    private SpriteGroup playerGroup, obstacleGroup, agarGroup;
+    
+    private ArrayList<SpriteGroup> aiBacteriaGroups = new ArrayList<>();
+    
     /**
      * Шрифт для надписей на игровом поле
      */
@@ -175,67 +164,80 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
 
             pf = new PlayField(bg);
 
-            // Добавить на игровое поле группы спрайтов
-
-            obstacleGroup = pf.addGroup(new SpriteGroup("Obstacle Group"));
-            agarGroup = pf.addGroup(new SpriteGroup("Agar Group"));
-            aiBacteriaGroup = pf.addGroup(new SpriteGroup("AI Bacteria Group"));
-            playerGroup = pf.addGroup(new SpriteGroup("Player Group"));
+            // Добавить на игровое поле группу игрока
+            playerGroup = pf.addGroup(new SpriteGroup("Player"));
             playerGroup.add(dish.playerBacteria().sprite());
-
-            // Заполнить группы спрайтами
-
+            
+            // Добавить на игровое поле группы препятствия
+            obstacleGroup = pf.addGroup(new SpriteGroup("Obstacle"));
             for (Obstacle obstacle : dish.obstacles()) {
                 obstacleGroup.add(obstacle.sprite());
             }
+            pf.addCollisionGroup(playerGroup, obstacleGroup, new PlayerObstacleCollision());
+            
+            // Добавить на игровое поле группы агаров
+            agarGroup = pf.addGroup(new SpriteGroup("Agar Group"));
             for (Agar agar : dish.agar()) {
                 agar.sprite().setImmutable(true);
                 agar.sprite().setActive(false);
                 agarGroup.add(agar.sprite());
             }
-            for (AIBacteria aiBacteria : dish.aiBacterias()) {
-                aiBacteria.sprite().setImmutable(true);
-                aiBacteria.sprite().setActive(false);
-                aiBacteriaGroup.add(aiBacteria.sprite());
-            }
-
-            // Добавить на игровое поле коллизию Бактерия игрока - Препятствие
-
-            pf.addCollisionGroup(playerGroup, obstacleGroup, new PlayerObstacleCollision());
-
-            // Добавить на игровое поле коллизию Бактерия игрока - ИИБактерия
-
-            playerAICollision = new PlayerAICollision();
-
-            // Добавить слушателей для сигналов посылаемых коллизией Бактерия игрока - ИИБактерия
-
-            playerAICollision.addPlayerEatenListener(this);
-            playerAICollision.addPlayerEatenListener(gm);
-
-            pf.addCollisionGroup(playerGroup, aiBacteriaGroup, playerAICollision);
-
-            // Добавить на игровое поле коллизию Бактерия игрока - Агар
-
-            playerAgarCollision = new PlayerAgarCollision();
+            
+            PlayerAgarCollision playerAgarCollision = new PlayerAgarCollision();
 
             // Добавить слушателей для сигналов посылаемых коллизией Бактерия игрока - Агар
-
             playerAgarCollision.addAgarEatenListener(this);
             playerAgarCollision.addAgarEatenListener(gm);
 
             pf.addCollisionGroup(playerGroup, agarGroup, playerAgarCollision);
+            
+            int aiIndex = 0;
+            for (AIBacteria aiBacteria : dish.aiBacterias()) {
+                aiBacteria.sprite().setImmutable(true);
+                aiBacteria.sprite().setActive(false);
+                
+                SpriteGroup aiBacteriaGroup = new SpriteGroup("ai_" + aiIndex);
+                aiBacteriaGroup.add(aiBacteria.sprite());
+                
+                // Создадим коллизии для ботов с ботами
+                for(SpriteGroup AIgroup: aiBacteriaGroups) {
+                    // Добавить на игровое поле коллизию Бактерия игрока - ИИБактерия
+                    AIAICollision AIAICollision = new AIAICollision();
 
-            // Добавить на игровое поле коллизию ИИБактерия - Агар
+                    // Добавить слушателей для сигналов посылаемых коллизией ИИ Бактерия - ИИБактерия
 
-            aiAgarCollision = new AIAgarCollision();
+                    AIAICollision.addPlayerEatenListener(this);
+                    AIAICollision.addPlayerEatenListener(gm);
 
-            // Добавить слушателей для сигналов посылаемых коллизией ИИБактерия - Агар
+                    pf.addCollisionGroup(AIgroup, aiBacteriaGroup, AIAICollision);
+                }
+                
+                aiBacteriaGroups.add(aiBacteriaGroup);
+                pf.addGroup(aiBacteriaGroup);
+                // Добавить на игровое поле коллизию Бактерия игрока - ИИБактерия
+                PlayerAICollision playerAICollision = new PlayerAICollision();
 
-            aiAgarCollision.addAgarEatenListener(this);
-            aiAgarCollision.addAgarEatenListener(gm);
+                // Добавить слушателей для сигналов посылаемых коллизией Бактерия игрока - ИИБактерия
 
-            pf.addCollisionGroup(aiBacteriaGroup, agarGroup, aiAgarCollision);
+                playerAICollision.addPlayerEatenListener(this);
+                playerAICollision.addPlayerEatenListener(gm);
 
+                pf.addCollisionGroup(playerGroup, aiBacteriaGroup, playerAICollision);
+                
+                // Добавить на игровое поле коллизию ИИБактерия - Агар
+                AIAgarCollision aiAgarCollision = new AIAgarCollision();
+
+                // Добавить слушателей для сигналов посылаемых коллизией ИИБактерия - Агар
+                aiAgarCollision.addAgarEatenListener(this);
+                aiAgarCollision.addAgarEatenListener(gm);
+
+                pf.addCollisionGroup(aiBacteriaGroup, agarGroup, aiAgarCollision);
+                
+                pf.addCollisionGroup(aiBacteriaGroup, obstacleGroup, new PlayerObstacleCollision());
+                aiIndex++;
+                
+            }
+            
             // Добавить шрифт для надписей на игровом поле
 
             gameFont = fontManager.getFont(getImage("assets/font/font.fnt"));
@@ -315,14 +317,14 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
 
         int spawnedAI = 0;
 
-        for (Sprite aiSprite : aiBacteriaGroup.getSprites()) {
+        for (SpriteGroup aiSpriteGroup : aiBacteriaGroups) {
 
             // Если спрайт ИИБактерии невидим ...
+            Sprite aiSprite = aiSpriteGroup.getSprites()[0];
 
             if (aiSprite != null && !aiSprite.isActive()) {
 
                 // ... сделать его видимым
-
                 aiSprite.setActive(true);
                 spawnedAI++;
 
@@ -394,10 +396,10 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
             // ... удалить ИИБактерию из группы спрайтов
 
             aiBacteria.setImmutable(false);
-            aiBacteriaGroup.remove(aiBacteria);
+            for(SpriteGroup aiBacteriaGroup : aiBacteriaGroups)
+                aiBacteriaGroup.remove(aiBacteria);
 
             // ... проиграть звук
-
             playSound(AIBACTERIA_EATEN_SOUND);
         }
     }
