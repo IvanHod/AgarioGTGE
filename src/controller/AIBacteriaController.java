@@ -1,9 +1,11 @@
 package controller;
 
 
+import gamemodel.Dish;
 import java.awt.*;
 
 import gameobject.AIBacteria;
+import gameobject.Bacteria;
 import gameobject.PlayerBacteria;
 import utils.GameMath;
 import utils.PositionRandomizer;
@@ -25,25 +27,25 @@ public class AIBacteriaController extends BacteriaController {
      * Сделано для случаев, когда конечная точка попадает на непроходимое Препятствие
      */
     private final static int DESIRED_POSITION_BOUND = 50;
-
+    
     /**
-     * Выбранная конченая точка движения ИИБактерии
+     * чаша Петри
      */
-    private Point desiredPosition;
-
+    private Dish dish;
+    
+    /**
+     * Бактерия для контроллера
+     */
+    private AIBacteria bacteria;
+    
     /**
      * Конструктор класса с параметрами
      *
-     * @param playerBacteria Бактерия игрока
-     * @param aiBacteria     ИИБактерия
+     * @param dish чаша Петри
      */
-    public AIBacteriaController(PlayerBacteria playerBacteria, AIBacteria aiBacteria) {
-        otherBacteria = playerBacteria;
-        bacteria = aiBacteria;
-
-        // Случайно выбранная конечная точка движения
-
-        desiredPosition = PositionRandomizer.getRandomPosition();
+    public AIBacteriaController(Dish _dish, AIBacteria _bacteria) {
+        dish = _dish;
+        bacteria = _bacteria;
     }
 
     /**
@@ -54,74 +56,54 @@ public class AIBacteriaController extends BacteriaController {
      */
     @Override
     public boolean update(Point mousePosition) {
-
-        // Находится ли ИИБактерия на крае игрового поля
-
-        boolean isOnEdge = super.update(mousePosition);
-
-        // Позиции Бактерии игрока и ИИБактерии на игровом поле
-
-        Point playerPos = otherBacteria.getPosition();
-        Point aiPos = bacteria.getPosition();
-
-        // Расстояние от ИИБактерии до Бактерии игрока
-
-        double distanceToPlayer = GameMath.distance(aiPos, playerPos);
-
-        // Если Бактерия игрока находится достаточно близко ...
-
-        if (distanceToPlayer < AGGRO_DISTANCE) {
-
-            int angle;
-
-            // ... и уровень Бактерии игрока меньше или равен уровню ИИБактерии ...
-
-            if (otherBacteria.level() <= bacteria.level()) {
-
-                // ... следовать за игроком
-
-                angle = GameMath.angle(aiPos, playerPos);
-
-            } else {
-
-                // ... иначе, уходить от игрока
-
-                angle = GameMath.angle(aiPos, GameMath.getOppositePoint(playerPos, aiPos));
-
-                desiredPosition = PositionRandomizer.getRandomPosition();
-            }
-
-            // Следовать к выбранной конечной точке движения
+        
+        
+        // выбрать цель
+        Bacteria _bacteria = chooseTarget();
+        if(_bacteria != null) {
+            boolean toRun = bacteria.level() < _bacteria.level();
+            int angle = GameMath.angle(bacteria.getPosition(), _bacteria.getPosition()) + (toRun ? 180 : 0);
+            System.out.println("position: " + _bacteria.getPosition().getLocation() + ", " + " + angle" + angle);
             bacteria.setDirection(angle);
         }
-
-        // .. иначе
-
-        else  {
-
-            // Если расстояние до конечной точки движения менее определенной границы ...
-
-            if (GameMath.distance(aiPos, desiredPosition) <= DESIRED_POSITION_BOUND) {
-
-                // ... выбрать новую конечную точку движения
-
-                desiredPosition = PositionRandomizer.getRandomPosition();
-            }
-
-            // Если ИИБактерия достигла края игрового поля ...
-
-            if (isOnEdge) {
-
-                // ... выбрать новую конечную точку движения
-                desiredPosition = PositionRandomizer.getRandomPosition();
-            }
-
-            // Следовать к выбранной конечной точке движения
-            bacteria.setDirection(GameMath.angle(aiPos, desiredPosition));
-        }
-
-        // Dummy-значение, которое не используется
-
+        
+        // определить коллизию
+        detectCollision();
+        
+        // Находится ли ИИБактерия на крае игрового поля
+        detectBorder();
+        
         return true;
+    }
+    
+    public Bacteria chooseTarget() {
+        Bacteria bigOne = dish.getBigNearestBacteria(bacteria);
+        Bacteria smallOne = dish.getSmallNearestBacteria(bacteria);
+        Bacteria _bacteria = null;
+        //Если на поле поблизости есть бактерии больше меня
+        if (bigOne != null) {
+           // Если бактерий меньше меня нет
+            if(smallOne == null) {
+                _bacteria = bigOne;
+            }
+            // Если на поле есть бактерии больше и меньше меня
+            else {
+                double distanceToBig = GameMath.distance(bacteria.getPosition(), bigOne.getPosition());
+                double distanceToSmall = GameMath.distance(bacteria.getPosition(), smallOne.getPosition());
+                // Если агара нет или есть но расстояние до маленькой частица больше чем до большой
+                _bacteria = distanceToBig < distanceToSmall ? bigOne : smallOne;
+            }
+        } else {
+            _bacteria = dish.getAgarNearestBacteria(bacteria);
+        }
+        return _bacteria;
+    }
+    
+    public void detectCollision() {
+        
+    }
+    
+    private void detectBorder() {
+        
     }
 }

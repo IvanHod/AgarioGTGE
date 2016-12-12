@@ -52,7 +52,7 @@ public class GameModel implements GameObjectEatenListener {
     /**
      * Максимальное количество Агара
      */
-    private final static int MAX_AGAR_COUNT = 500;
+    private final static int MAX_AGAR_COUNT = 100;
     /**
      * Промежуток в секундах, по истечении которого Агар спавнится на поле
      */
@@ -60,7 +60,7 @@ public class GameModel implements GameObjectEatenListener {
     /**
      * Максимальное количество ИИБактерий
      */
-    private final static int MAX_AIBACTERIA_COUNT = 100;
+    private final static int MAX_AIBACTERIA_COUNT = 10;
     /**
      * Скорость ИИБактерии
      */
@@ -177,13 +177,12 @@ public class GameModel implements GameObjectEatenListener {
 
             aiBacteria.setDirection(ThreadLocalRandom.current().nextInt(0, 360));
 
-            bacteriaControllers.add(new AIBacteriaController(playerBacteria, aiBacteria));
+            bacteriaControllers.add(new AIBacteriaController(dish, aiBacteria));
 
             dish.addAIBacteria(aiBacteria);
         }
 
         // Отправить сигнал спавна Агара
-
         fireSpawnAgar();
     }
 

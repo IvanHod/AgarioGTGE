@@ -29,6 +29,11 @@ public abstract class Bacteria extends GameObject {
      * Количество съеденного Бактерией Агара
      */
     protected int agarEaten;
+    
+    /**
+     * Бактерия вступившая в коллизию с текущей
+     */
+    public Bacteria collisionBacteria = null;
 
     /**
      * Возвращает позицию Бактерии на игровом поле

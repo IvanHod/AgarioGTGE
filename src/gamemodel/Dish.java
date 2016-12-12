@@ -7,13 +7,17 @@ import java.util.ArrayList;
 
 import gameobject.AIBacteria;
 import gameobject.Agar;
+import gameobject.Bacteria;
 import gameobject.Obstacle;
 import gameobject.PlayerBacteria;
+import utils.GameMath;
 
 /**
  * Чашка Петри
  */
 public class Dish {
+    
+    private final int MAX_DISTANCE = 500;
 
     /**
      * Бактерия игрока
@@ -145,5 +149,60 @@ public class Dish {
         aiBacterias.removeIf(aiBacteria -> aiBacteria.sprite() == aiBacteriaSprite);
     }
 
+    public Bacteria getBigNearestBacteria(Bacteria bacteria) {
+        Bacteria biggest = GameMath.distance(bacteria.getPosition(), playerBacteria.getPosition()) < MAX_DISTANCE
+                ? playerBacteria : null;
+        for(AIBacteria _bacteria : aiBacterias) {
+            double distance = GameMath.distance(bacteria.getPosition(), _bacteria.getPosition());
+            if(distance < MAX_DISTANCE && bacteria.level() != _bacteria.level()) {
+                if(biggest == null)
+                    biggest = _bacteria;
+                else {
+                    if(biggest.level() < _bacteria.level())
+                        biggest = _bacteria;
+                    else if(biggest.level() == _bacteria.level() 
+                            && distance < GameMath.distance(bacteria.getPosition(), biggest.getPosition())) {
+                        biggest = _bacteria;    
+                    }
+                }
+            }
+        }
+        return biggest;
+    }
+
+    public Bacteria getSmallNearestBacteria(Bacteria bacteria) {
+        Bacteria lowest = GameMath.distance(bacteria.getPosition(), playerBacteria.getPosition()) < MAX_DISTANCE
+                ? playerBacteria : null;
+        for(AIBacteria _bacteria : aiBacterias) {
+            double distance = GameMath.distance(bacteria.getPosition(), _bacteria.getPosition());
+            if(distance < MAX_DISTANCE && bacteria.level() != _bacteria.level()) {
+                if(lowest == null)
+                    lowest = _bacteria;
+                else {
+                    if(lowest.level() > _bacteria.level())
+                        lowest = _bacteria;
+                    else if(lowest.level() == _bacteria.level() 
+                            && distance < GameMath.distance(bacteria.getPosition(), lowest.getPosition())) {
+                        lowest = _bacteria;    
+                    }
+                }
+            }
+        }
+        return lowest;
+    }
+
+    public Bacteria getAgarNearestBacteria(Bacteria bacteria) {
+        Bacteria agar = null;
+        for(AIBacteria _bacteria : aiBacterias) {
+            double distance = GameMath.distance(bacteria.getPosition(), _bacteria.getPosition());
+            if(distance < MAX_DISTANCE) {
+                if (agar == null || agar != null && 
+                        distance < GameMath.distance(bacteria.getPosition(), agar.getPosition())) {
+                    agar = _bacteria;
+                }
+            }
+        }
+        return agar;
+    }
 
 }

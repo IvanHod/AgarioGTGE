@@ -52,7 +52,8 @@ public class PlayerBacteriaController extends BacteriaController {
 
         // Убрать "дерганье" спрайта при достижении указателя мыши
 
-        if (mousePosition.y == playerBacteriaPos.y && mousePosition.x == playerBacteriaPos.x)
+        if (Math.abs(mousePosition.y - playerBacteriaPos.y) < 10 
+                && Math.abs(mousePosition.x - playerBacteriaPos.x) < 10)
             bacteria.setSpeed(0);
         else
             bacteria.setSpeed(GameModel.PLAYER_SPEED);
