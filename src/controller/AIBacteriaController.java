@@ -61,7 +61,7 @@ public class AIBacteriaController extends BacteriaController {
         // выбрать цель
         Bacteria _bacteria = chooseTarget();
         if(_bacteria != null) {
-            boolean toRun = bacteria.level() < _bacteria.level();
+                boolean toRun = bacteria.level() < _bacteria.level();
             int angle = GameMath.angle(bacteria.getPosition(), _bacteria.getPosition()) + (toRun ? 180 : 0);
             System.out.println("position: " + _bacteria.getPosition().getLocation() + ", " + " + angle" + angle);
             bacteria.setDirection(angle);
