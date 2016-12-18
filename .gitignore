@@ -64,3 +64,4 @@ manifest.mf
 nbproject/
 src/AgarIoV2.java
 src/AgarIOGame.java
+/dist/

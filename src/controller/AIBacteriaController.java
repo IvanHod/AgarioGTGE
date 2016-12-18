@@ -8,7 +8,6 @@ import gameobject.AIBacteria;
 import gameobject.Bacteria;
 import gameobject.PlayerBacteria;
 import utils.GameMath;
-import utils.PositionRandomizer;
 
 /**
  * Контроллер для управления движением ИИБактерии на игровом поле
@@ -36,7 +35,9 @@ public class AIBacteriaController extends BacteriaController {
     /**
      * Бактерия для контроллера
      */
-    private AIBacteria bacteria;
+    public AIBacteria bacteria;
+    
+    int angle = 0;
     
     /**
      * Конструктор класса с параметрами
@@ -56,24 +57,29 @@ public class AIBacteriaController extends BacteriaController {
      */
     @Override
     public boolean update(Point mousePosition) {
-        
-        
-        // выбрать цель
-        Bacteria _bacteria = chooseTarget();
-        if(_bacteria != null) {
-                boolean toRun = bacteria.level() < _bacteria.level();
-            int angle = GameMath.angle(bacteria.getPosition(), _bacteria.getPosition()) + (toRun ? 180 : 0);
-            System.out.println("position: " + _bacteria.getPosition().getLocation() + ", " + " + angle" + angle);
-            bacteria.setDirection(angle);
+       
+        if(bacteria.stepCount != 0){
+            bacteria.stepCount--;
         }
-        
-        // определить коллизию
-        detectCollision();
-        
-        // Находится ли ИИБактерия на крае игрового поля
-        detectBorder();
-        
-        return true;
+        else{
+            // выбрать цель
+            Bacteria _bacteria = chooseTarget();
+            if(_bacteria != null) {
+                boolean toRun = bacteria.level() < _bacteria.level();
+                angle = GameMath.angle(bacteria.getPosition(), _bacteria.getPosition()) + (toRun ? 180 : 0);
+                bacteria.setDirection(angle);
+            }
+
+            // определить коллизию
+            detectCollision();
+
+            // Находится ли ИИБактерия на крае игрового поля
+            detectBorder();
+
+            return true;
+    
+        }
+        return false;
     }
     
     public Bacteria chooseTarget() {
@@ -104,6 +110,15 @@ public class AIBacteriaController extends BacteriaController {
     }
     
     private void detectBorder() {
-        
+        Point pos = bacteria.getPosition();
+        double x = pos.getX(),
+                y = pos.getY();
+        if(x > 2900 && angle < 90 && angle > 270 
+                || x < 0 
+                || y > 2900 && angle > 180
+                || y < 0){
+            bacteria.setDirection(angle - (int)(100 + Math.random()*(60)));
+            bacteria.setSteps((int)(10 + Math.random()*(50)));
+        }
     }
 }

@@ -31,7 +31,7 @@ public class ObstacleFactory extends GameObjectFactory {
      * @return объект Препятствия
      */
     @Override
-    public GameObject createGameObject() {
+    public GameObject createGameObject(int level) {
 
         try {
             obstacleView = new ObstacleView();

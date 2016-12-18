@@ -12,5 +12,5 @@ public abstract class GameObjectFactory {
      *
      * @return объект игры
      */
-    public abstract GameObject createGameObject();
+    public abstract GameObject createGameObject(int level);
 }

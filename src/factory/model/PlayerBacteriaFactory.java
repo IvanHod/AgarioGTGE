@@ -18,7 +18,7 @@ public class PlayerBacteriaFactory extends GameObjectFactory {
      * @return объект Бактерии игрока
      */
     @Override
-    public GameObject createGameObject() {
+    public GameObject createGameObject(int level) {
 
         try {
             return new PlayerBacteria(new PlayerBacteriaView());

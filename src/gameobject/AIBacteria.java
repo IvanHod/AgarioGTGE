@@ -13,8 +13,9 @@ public class AIBacteria extends Bacteria {
      *
      * @param aiBacteriaView представление ИИБактерии
      */
-    public AIBacteria(AIBacteriaView aiBacteriaView) {
+    public AIBacteria(AIBacteriaView aiBacteriaView, int _level) {
         gameObjectView = aiBacteriaView;
+        level = _level;
     }
 
 }

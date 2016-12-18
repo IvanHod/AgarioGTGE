@@ -20,4 +20,6 @@ public interface LevelUpListener {
      * @param bacteriaSprite спрайт бактерии, которой требуется повысить уровень
      */
     void levelIncreased(Sprite bacteriaSprite);
+    
+    void levelIncreasedCount(Sprite bacteriaSprite, int count);
 }

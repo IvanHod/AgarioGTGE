@@ -35,6 +35,15 @@ public abstract class Bacteria extends GameObject {
      */
     public Bacteria collisionBacteria = null;
 
+    public int stepCount = 0;
+    
+    public void setSteps(int _stepCount){
+        stepCount=_stepCount;
+    }
+    public int getSteps(){
+        return stepCount;
+    }
+    
     /**
      * Возвращает позицию Бактерии на игровом поле
      *

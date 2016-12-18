@@ -154,6 +154,8 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
             gm.addSpawnGameObjectListener(this);
             gm.addLevelUpListener(this);
             gm.addGameOverListener(this);
+            
+            gm.startGame();
 
             // Создать фон для поля игры
 
@@ -202,7 +204,7 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
                 // Создадим коллизии для ботов с ботами
                 for(SpriteGroup AIgroup: aiBacteriaGroups) {
                     // Добавить на игровое поле коллизию Бактерия игрока - ИИБактерия
-                    AIAICollision AIAICollision = new AIAICollision();
+                    AIAICollision AIAICollision = new AIAICollision(dish);
 
                     // Добавить слушателей для сигналов посылаемых коллизией ИИ Бактерия - ИИБактерия
 
@@ -378,6 +380,27 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
 
         BufferedImage currentSpriteImage = bacteriaSprite.getImage();
         bacteriaSprite.setImage(ImageScaler.scaleImage(currentSpriteImage, SCALE_IMAGE_X, SCALE_IMAGE_Y));
+    }
+
+    /**
+     * Принимает сигнал LevelUp (урвоень какой-либо Бактерии увеличился)
+     *
+     * @param bacteriaSprite спрайт бактерии, которой требуется повысить уровень
+     */
+    @Override
+    public void levelIncreasedCount(Sprite bacteriaSprite, int levelCount) {
+
+        // Увеличить изображение Бактерии
+        int scale_x = SCALE_IMAGE_X,
+                scale_y = SCALE_IMAGE_Y;
+        
+        for(int i = 0; i < levelCount; i++) {
+            scale_x += scale_x;
+            scale_y += scale_y;
+        }
+        System.out.print("levelINCR "+scale_x+" "+scale_y+"\n");
+        BufferedImage currentSpriteImage = bacteriaSprite.getImage();
+        bacteriaSprite.setImage(ImageScaler.scaleImage(currentSpriteImage, scale_x, scale_y));
     }
 
     /**
