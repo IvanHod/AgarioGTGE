@@ -7,7 +7,7 @@ import view.AIBacteriaView;
  * ИИБактерия
  */
 public class AIBacteria extends Bacteria {
-
+    
     /**
      * Конструктор класса с параметром
      *

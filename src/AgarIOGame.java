@@ -18,14 +18,18 @@ public class AgarIOGame extends GameEngine {
      */
     @Override
     public GameObject getGame(int gameID) {
+        GameObject game = null;
         switch (gameID) {
             case 0:
-                return new StartScreen(this);
+                game = new StartScreen(this);
+                break;
             case 1:
-                return new GameView(this);
+                game = new GameView(this);
+                break;
             case 2:
-                return new GameOverScreen(this);
+                game = new GameOverScreen(this);
+                break;
         }
-        return null;
+        return game;
     }
 }
