@@ -1,3 +1,6 @@
+package agariogtge;
+
+import agariogtge.AgarIOGame;
 import com.golden.gamedev.GameLoader;
 
 import game.GameView;

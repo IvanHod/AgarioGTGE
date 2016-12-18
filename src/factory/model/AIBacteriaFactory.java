@@ -31,7 +31,7 @@ public class AIBacteriaFactory extends GameObjectFactory {
      * @return объект ИИБактерии
      */
     @Override
-    public GameObject createGameObject() {
+    public GameObject createGameObject(int level) {
 
         try {
             aiBacteriaView = new AIBacteriaView();
@@ -44,7 +44,7 @@ public class AIBacteriaFactory extends GameObjectFactory {
         position = PositionRandomizer.getRandomPosition();
         aiBacteriaView.getObjectSprite().setX(position.x);
         aiBacteriaView.getObjectSprite().setY(position.y);
-
-        return new AIBacteria(aiBacteriaView);
+        
+        return new AIBacteria(aiBacteriaView,level);
     }
 }

@@ -78,6 +78,5 @@ public class PlayerAICollision extends BasicCollisionGroup {
         for (GameObjectEatenListener gameObjectEatenListener : gameObjectEatenListeners) {
             gameObjectEatenListener.bacteriaEaten(playerBacteria, aiBacteria);
         }
-
     }
 }

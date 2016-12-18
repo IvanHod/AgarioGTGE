@@ -14,8 +14,8 @@ public abstract class BacteriaController {
     /**
      * Контролируемые Бактерии
      */
-    protected Bacteria bacteria, otherBacteria;
-
+    public Bacteria bacteria, otherBacteria;
+    
     /**
      * Проверяет, находится ли Бактерия на краю игрового поля или нет
      *

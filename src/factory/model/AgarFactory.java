@@ -30,7 +30,7 @@ public class AgarFactory extends GameObjectFactory {
      * @return объект Агара
      */
     @Override
-    public GameObject createGameObject() {
+    public GameObject createGameObject(int level) {
 
         try {
 

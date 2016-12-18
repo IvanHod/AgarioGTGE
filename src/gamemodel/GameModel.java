@@ -60,7 +60,7 @@ public class GameModel implements GameObjectEatenListener {
     /**
      * Максимальное количество ИИБактерий
      */
-    private final static int MAX_AIBACTERIA_COUNT = 10;
+    private final static int MAX_AIBACTERIA_COUNT = 30;
     /**
      * Скорость ИИБактерии
      */
@@ -135,10 +135,13 @@ public class GameModel implements GameObjectEatenListener {
     public GameModel(Dish dish) throws IOException {
 
         this.dish = dish;
+    }
+
+    public void startGame() {
 
         // Создать Бактерию игрока ...
 
-        PlayerBacteria playerBacteria = (PlayerBacteria) playerBacteriaFactory.createGameObject();
+        PlayerBacteria playerBacteria = (PlayerBacteria) playerBacteriaFactory.createGameObject(1);
 
         // ... добавить ей контроллер
 
@@ -159,19 +162,23 @@ public class GameModel implements GameObjectEatenListener {
         // Создать Агар и добавить его в Чашку Петри
 
         for (int i = 0; i < MAX_OBSTACLES_COUNT; i++) {
-            dish.addObstacle((Obstacle) obstacleFactory.createGameObject());
+            dish.addObstacle((Obstacle) obstacleFactory.createGameObject(0));
         }
 
         // Создать препятствия и добавить их в Чашку Петри
 
         for (int i = 0; i < MAX_AGAR_COUNT; i++) {
-            dish.addAgar(((Agar) agarFactory.createGameObject()));
+            dish.addAgar(((Agar) agarFactory.createGameObject(0)));
         }
 
         // Для ИИБактерии выполнить аналогичную Бактерии Игрока процедуру
 
         for (int i = 0; i < MAX_AIBACTERIA_COUNT; i++) {
-            AIBacteria aiBacteria = (AIBacteria) aiBacteraiFactory.createGameObject();
+            int level = (int)( Math.random()*2);
+            System.out.print("L"+level+"\n");
+            AIBacteria aiBacteria = (AIBacteria) aiBacteraiFactory.createGameObject(level);
+            fireLevelUpCount(aiBacteria.sprite(), level); 
+                
 
             aiBacteria.setSpeed(AI_SPEED);
 
@@ -184,8 +191,9 @@ public class GameModel implements GameObjectEatenListener {
 
         // Отправить сигнал спавна Агара
         fireSpawnAgar();
+        
     }
-
+    
     /**
      * Обновляет все контроллеры игры
      *
@@ -374,6 +382,17 @@ public class GameModel implements GameObjectEatenListener {
     private void fireLevelUp(Sprite bacteriaSprite) {
         for (LevelUpListener levelUpListener : levelUpListeners) {
             levelUpListener.levelIncreased(bacteriaSprite);
+        }
+    }
+
+    /**
+     * Отправляет сигнал повышения уровня Бактерии
+     *
+     * @param bacteriaSprite спрайт Бактерии, дял которой следует повысить уровень
+     */
+    private void fireLevelUpCount(Sprite bacteriaSprite, int countLevels) {
+        for (LevelUpListener levelUpListener : levelUpListeners) {
+            levelUpListener.levelIncreasedCount(bacteriaSprite, countLevels);
         }
     }
 
