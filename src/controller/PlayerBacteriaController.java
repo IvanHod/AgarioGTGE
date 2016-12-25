@@ -37,11 +37,6 @@ public class PlayerBacteriaController extends BacteriaController {
 
         Point playerBacteriaPos = bacteria.getPosition();
 
-        // Сделать так, чтобы центр спрайта находился под указателем мыши
-
-        playerBacteriaPos.x = playerBacteriaPos.x + bacteria.sprite().getWidth() / 2;
-        playerBacteriaPos.y = playerBacteriaPos.y + bacteria.sprite().getHeight() / 2;
-
         // Выбрать направление в сторону позиции указателя мыши на поле ...
 
         int angle = GameMath.angle(playerBacteriaPos, mousePosition);

@@ -5,6 +5,7 @@ import gamemodel.Dish;
 import java.awt.*;
 
 import gameobject.AIBacteria;
+import gameobject.Agar;
 import gameobject.Bacteria;
 import gameobject.PlayerBacteria;
 import utils.GameMath;
@@ -32,17 +33,15 @@ public class AIBacteriaController extends BacteriaController {
      */
     private Dish dish;
     
-    /**
-     * Бактерия для контроллера
-     */
-    public AIBacteria bacteria;
-    
     int angle = 0;
+    
+    boolean toRun = false;
     
     /**
      * Конструктор класса с параметрами
      *
-     * @param dish чаша Петри
+     * @param _dish чаша Петри
+     * @param _bacteria чаша Петри
      */
     public AIBacteriaController(Dish _dish, AIBacteria _bacteria) {
         dish = _dish;
@@ -57,16 +56,16 @@ public class AIBacteriaController extends BacteriaController {
      */
     @Override
     public boolean update(Point mousePosition) {
-       
+        toRun = false;
         if(bacteria.stepCount != 0){
             bacteria.stepCount--;
+            detectBorder();
         }
         else{
             // выбрать цель
-            Bacteria _bacteria = chooseTarget();
-            if(_bacteria != null) {
-                boolean toRun = bacteria.level() < _bacteria.level();
-                angle = GameMath.angle(bacteria.getPosition(), _bacteria.getPosition()) + (toRun ? 180 : 0);
+            Point pos = chooseTarget();
+            if(pos != null) {
+                angle = GameMath.angle(bacteria.getPosition(), pos) + (toRun ? 180 : 0);
                 bacteria.setDirection(angle);
             }
 
@@ -76,33 +75,42 @@ public class AIBacteriaController extends BacteriaController {
             // Находится ли ИИБактерия на крае игрового поля
             detectBorder();
 
+            
             return true;
     
         }
         return false;
     }
     
-    public Bacteria chooseTarget() {
+    public Point chooseTarget() {
         Bacteria bigOne = dish.getBigNearestBacteria(bacteria);
         Bacteria smallOne = dish.getSmallNearestBacteria(bacteria);
-        Bacteria _bacteria = null;
+        Point pos = null;
         //Если на поле поблизости есть бактерии больше меня
         if (bigOne != null) {
            // Если бактерий меньше меня нет
             if(smallOne == null) {
-                _bacteria = bigOne;
+                pos = bigOne.getPosition();
+                toRun = true;
             }
             // Если на поле есть бактерии больше и меньше меня
             else {
                 double distanceToBig = GameMath.distance(bacteria.getPosition(), bigOne.getPosition());
                 double distanceToSmall = GameMath.distance(bacteria.getPosition(), smallOne.getPosition());
                 // Если агара нет или есть но расстояние до маленькой частица больше чем до большой
-                _bacteria = distanceToBig < distanceToSmall ? bigOne : smallOne;
+                pos = distanceToBig < distanceToSmall ? bigOne.getPosition() : smallOne.getPosition();
+                toRun = distanceToBig < distanceToSmall;
             }
+        } else if(smallOne != null) {
+            pos = smallOne.getPosition();
         } else {
-            _bacteria = dish.getAgarNearestBacteria(bacteria);
+            Agar agar = dish.getAgarNearestBacteria(bacteria);
+            
+            if(agar != null)
+                pos = agar.getPosition();
         }
-        return _bacteria;
+        bacteria.stepCount = (int)(10 + Math.random()*(50));
+        return pos;
     }
     
     public void detectCollision() {
@@ -113,12 +121,16 @@ public class AIBacteriaController extends BacteriaController {
         Point pos = bacteria.getPosition();
         double x = pos.getX(),
                 y = pos.getY();
-        if(x > 2900 && angle < 90 && angle > 270 
-                || x < 0 
-                || y > 2900 && angle > 180
-                || y < 0){
-            bacteria.setDirection(angle - (int)(100 + Math.random()*(60)));
-            bacteria.setSteps((int)(10 + Math.random()*(50)));
+        if(x > 2900 || x < 50 || y > 2900 || y < 50){
+            
+            int newDir = angle - (int)(180 + Math.random()*(10));
+            if(newDir<0){
+                newDir=360+newDir;
+            }
+            bacteria.setDirection(newDir);
+            /*if(bacteria.stepCount!=0){
+                bacteria.setSteps((int)(10 + Math.random()*(50)));
+            }*/
         }
     }
 }
