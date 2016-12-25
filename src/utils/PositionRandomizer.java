@@ -25,10 +25,10 @@ public class PositionRandomizer {
 
         // Отодвинуть позицию спавна какого-либо объекта игры от позиции спавна Бактерии игрока
 
-        if (randomPosition.x == GameView.initialPlayerPosition.x)
+        /*if (randomPosition.x == GameView.initialPlayerPosition.x)
             randomPosition.x += 500;
         if (randomPosition.y == GameView.initialPlayerPosition.y)
-            randomPosition.y -= 500;
+            randomPosition.y -= 500;*/
 
         return randomPosition;
     }
