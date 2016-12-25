@@ -5,7 +5,7 @@ import view.AgarView;
 /**
  * Агар
  */
-public class Agar extends GameObject {
+public class Agar extends Bacteria {
 
     /**
      * Конструктор класса с параметром

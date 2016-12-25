@@ -51,8 +51,8 @@ public abstract class Bacteria extends GameObject {
      */
     public Point getPosition() {
         Point position = new Point();
-        position.x = (int) (this.sprite().getX());
-        position.y = (int) (this.sprite().getY());
+        position.x = (int) (this.sprite().getX() + this.sprite().getWidth() / 2);
+        position.y = (int) (this.sprite().getY() + this.sprite().getHeight() / 2);
         return position;
     }
 
