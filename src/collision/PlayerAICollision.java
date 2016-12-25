@@ -45,15 +45,18 @@ public class PlayerAICollision extends BasicCollisionGroup {
 
         // Позиции Бактерии игрока и ИИБактерии на поле во время коллизии
 
-        Point playerPosition = new Point((int) sprite.getX(), (int) sprite.getY());
-        Point aiPosition = new Point((int) sprite1.getX(), (int) sprite1.getY());
+        Point playerPosition = new Point((int) (sprite.getX() + sprite.getWidth()/2), 
+                (int) (sprite.getY() + sprite.getHeight()/2));
+        Point aiPosition = new Point((int) (sprite1.getX() + sprite1.getWidth()/2), 
+                (int) (sprite1.getY() + sprite1.getWidth()/2));
+        
+        double distance = GameMath.distance(playerPosition, aiPosition);
 
         // Если расстояние между бактериями позволяет одной Бактерии съесть другую...
 
-        if (GameMath.distance(playerPosition, aiPosition) <= DISTANCE_TO_EAT) {
+        if (distance <= DISTANCE_TO_EAT) {
 
             // ... отправить сигнал о том, что одна Бактерия съела другую
-
             fireBacteriaEaten(sprite, sprite1);
         }
 

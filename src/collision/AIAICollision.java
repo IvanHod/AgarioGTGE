@@ -10,6 +10,7 @@ import com.golden.gamedev.object.collision.BasicCollisionGroup;
 import controller.AIBacteriaController;
 import gamemodel.Dish;
 import gameobject.Bacteria;
+import java.awt.Point;
 import java.util.ArrayList;
 import listeners.GameObjectEatenListener;
 import utils.GameMath;
@@ -21,6 +22,13 @@ import view.AIBacteriaView;
  */
 public class AIAICollision extends BasicCollisionGroup {
 
+    
+    /**
+     * Максимальное расстояние между Бактериями, при достижении которого возможно "поедание" одной
+     * бактерией другой
+     */
+    private final static int DISTANCE_TO_EAT = 50;
+    
     Dish dish = null;
      /**
      * Слушатели сигнала GameObjectEaten говорящего о том, что был съеден какой-либо объект игры
@@ -33,27 +41,28 @@ public class AIAICollision extends BasicCollisionGroup {
     
     @Override
     public void collided(Sprite s1, Sprite s2) {
-        //boolean firstBigest = ((AIBacteriaView)s1).getParticle().getSize() > ((AIBacteriaView)s2).getParticle().getSize();
-        //Particle p1 = firstBigest ? ((SpriteView)s1).getParticle() : ((SpriteView)s2).getParticle();
-        //Particle p2 = firstBigest ? ((SpriteView)s2).getParticle() : ((SpriteView)s1).getParticle();
         
-        
-        Bacteria p1 = dish.aiBacteria(s1);
-        Bacteria p2 = dish.aiBacteria(s2);
-        if( p1.level() > p2.level()) {
-            fireBacteriaEaten(s1, s2);
-        }
-        else if( p1.level() < p2.level()){
-            fireBacteriaEaten(s2, s1);
-        }
-        else{
-            int angle = p1.getDirection()- (int)(100 + Math.random()*(60)); 
-            p1.setDirection(angle);
-            p1.setSteps((int)(10 + Math.random()*(50)));
-            
-            int angle1 = p2.getDirection() - (int)(100 + Math.random()*(60)); 
-            p2.setDirection(angle);
-            p2.setSteps((int)(100 + Math.random()*(50)));
+        Bacteria b1 = dish.aiBacteria(s1);
+        Bacteria b2 = dish.aiBacteria(s2);
+        Point p1 = b1.getPosition(),
+                p2 = b2.getPosition();
+        double distance = GameMath.distance(p1, p2);
+        if(distance <= DISTANCE_TO_EAT) {
+            if( b1.level() > b2.level()) {
+                fireAIBacteriaEaten(s1, s2);
+            }
+            else if( b1.level() < b2.level()){
+                fireAIBacteriaEaten(s2, s1);
+            }
+            else {
+                int angle = b1.getDirection()- (int)(180 + Math.random()*(10)); 
+                b1.setDirection(angle);
+                b1.setSteps((int)(10 + Math.random()*(50)));
+
+                int angle1 = b2.getDirection() - (int)(180 + Math.random()*(10)); 
+                b2.setDirection(angle1);
+                b2.setSteps((int)(10 + Math.random()*(50)));
+            }   
         }
     
     }
@@ -75,6 +84,18 @@ public class AIAICollision extends BasicCollisionGroup {
     private void fireBacteriaEaten(Sprite playerBacteria, Sprite aiBacteria) {
         for (GameObjectEatenListener gameObjectEatenListener : gameObjectEatenListeners) {
             gameObjectEatenListener.bacteriaEaten(playerBacteria, aiBacteria);
+        }
+    }
+    
+    /**
+     * Сообщает всем слушателям о том, что одна бактерия съела другую
+     *
+     * @param playerBacteria спрайт Бактерии игрока
+     * @param aiBacteria     спрайт ИИБактерии
+     */
+    private void fireAIBacteriaEaten(Sprite bacteria_1, Sprite bacteria_2) {
+        for (GameObjectEatenListener gameObjectEatenListener : gameObjectEatenListeners) {
+            gameObjectEatenListener.aiBacteriaEaten(bacteria_1, bacteria_2);
         }
     }
     
