@@ -17,7 +17,7 @@ import utils.GameMath;
  */
 public class Dish {
     
-    private final int MAX_DISTANCE = 500;
+    private final int MAX_DISTANCE = 400;
 
     /**
      * Бактерия игрока
@@ -147,10 +147,12 @@ public class Dish {
      */
     public void removeAIBacteria(Sprite aiBacteriaSprite) {
         aiBacterias.removeIf(aiBacteria -> aiBacteria.sprite() == aiBacteriaSprite);
+        
     }
 
     public Bacteria getBigNearestBacteria(Bacteria bacteria) {
         Bacteria biggest = GameMath.distance(bacteria.getPosition(), playerBacteria.getPosition()) < MAX_DISTANCE
+                && bacteria.level() < playerBacteria.level()
                 ? playerBacteria : null;
         for(AIBacteria _bacteria : aiBacterias) {
             double distance = GameMath.distance(bacteria.getPosition(), _bacteria.getPosition());
@@ -171,11 +173,13 @@ public class Dish {
     }
 
     public Bacteria getSmallNearestBacteria(Bacteria bacteria) {
-        Bacteria lowest = GameMath.distance(bacteria.getPosition(), playerBacteria.getPosition()) < MAX_DISTANCE
+        Bacteria lowest = 
+                GameMath.distance(bacteria.getPosition(), playerBacteria.getPosition()) < MAX_DISTANCE
+                && bacteria.level() > playerBacteria.level()
                 ? playerBacteria : null;
         for(AIBacteria _bacteria : aiBacterias) {
             double distance = GameMath.distance(bacteria.getPosition(), _bacteria.getPosition());
-            if(distance < MAX_DISTANCE && bacteria.level() != _bacteria.level()) {
+            if(_bacteria != bacteria && distance < MAX_DISTANCE && bacteria.level() != _bacteria.level()) {
                 if(lowest == null)
                     lowest = _bacteria;
                 else {
@@ -191,15 +195,13 @@ public class Dish {
         return lowest;
     }
 
-    public Bacteria getAgarNearestBacteria(Bacteria bacteria) {
-        Bacteria agar = null;
-        for(AIBacteria _bacteria : aiBacterias) {
+    public Agar getAgarNearestBacteria(Bacteria bacteria) {
+        Agar agar = null;
+        for(Agar _bacteria : agars) {
             double distance = GameMath.distance(bacteria.getPosition(), _bacteria.getPosition());
-            if(distance < MAX_DISTANCE) {
-                if (agar == null || agar != null && 
-                        distance < GameMath.distance(bacteria.getPosition(), agar.getPosition())) {
-                    agar = _bacteria;
-                }
+            if (_bacteria.sprite().isActive() && (agar == null || agar != null && 
+                    distance < GameMath.distance(bacteria.getPosition(), agar.getPosition()))) {
+                agar = _bacteria;
             }
         }
         return agar;

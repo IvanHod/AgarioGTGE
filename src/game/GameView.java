@@ -17,6 +17,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import collision.AIAgarCollision;
+import collision.AIObstacleCollision;
 import collision.PlayerAICollision;
 import collision.PlayerAgarCollision;
 import collision.PlayerObstacleCollision;
@@ -45,13 +46,14 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
     /**
      * Размер окна с игрой
      */
-    public static final Dimension GAME_WINDOW = new Dimension(1280, 720);
+    public static final Dimension GAME_WINDOW = new Dimension(900, 620);
 
     /**
      * Начальная позиция игрока
      */
-    public static final Point initialPlayerPosition = new Point((int) (GAME_WINDOW.getWidth() / 2),
-            (int) (GAME_WINDOW.getHeight() / 2));
+    public static final Point initialPlayerPosition
+            //= new Point((int) (GAME_WINDOW.getWidth() / 2), (int) (GAME_WINDOW.getHeight() / 2));
+            = new Point(500, 200);
 
     /**
      * Путь к изображению фона игрового поля
@@ -235,7 +237,7 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
 
                 pf.addCollisionGroup(aiBacteriaGroup, agarGroup, aiAgarCollision);
                 
-                pf.addCollisionGroup(aiBacteriaGroup, obstacleGroup, new PlayerObstacleCollision());
+                pf.addCollisionGroup(aiBacteriaGroup, obstacleGroup, new AIObstacleCollision(dish));
                 aiIndex++;
                 
             }
@@ -380,6 +382,7 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
 
         BufferedImage currentSpriteImage = bacteriaSprite.getImage();
         bacteriaSprite.setImage(ImageScaler.scaleImage(currentSpriteImage, SCALE_IMAGE_X, SCALE_IMAGE_Y));
+        //currentSpriteImage.setData(raster);
     }
 
     /**
@@ -424,6 +427,31 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
 
             // ... проиграть звук
             playSound(AIBACTERIA_EATEN_SOUND);
+        }
+    }
+    
+    /**
+     * Принимает сигнал BacteriaEaten (одна Бактерия съела другую Бактерию)
+     *
+     * @param bacteria_1 спрайт Бактерии игрока
+     * @param bacteria_2     спрайт ИИБактерии
+     */
+    @Override
+    public void aiBacteriaEaten(Sprite bacteria_1, Sprite bacteria_2) {
+        
+        if (dish.aiBacteria(bacteria_1).level() > dish.aiBacteria(bacteria_2).level()) {
+
+            // удалить ИИБактерию из группы спрайтов
+            bacteria_2.setImmutable(false);
+            for(SpriteGroup aiBacteriaGroup : aiBacteriaGroups)
+                aiBacteriaGroup.remove(bacteria_2);
+        }
+        else if (dish.aiBacteria(bacteria_2).level() > dish.aiBacteria(bacteria_1).level()) {
+
+            // удалить ИИБактерию из группы спрайтов
+            bacteria_1.setImmutable(false);
+            for(SpriteGroup aiBacteriaGroup : aiBacteriaGroups)
+                aiBacteriaGroup.remove(bacteria_1);
         }
     }
 

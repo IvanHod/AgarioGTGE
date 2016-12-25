@@ -48,7 +48,7 @@ public class GameModel implements GameObjectEatenListener {
     /**
      * Максимальное количество Препятствий
      */
-    private final static int MAX_OBSTACLES_COUNT = 30;
+    private final static int MAX_OBSTACLES_COUNT = 10;
     /**
      * Максимальное количество Агара
      */
@@ -60,7 +60,7 @@ public class GameModel implements GameObjectEatenListener {
     /**
      * Максимальное количество ИИБактерий
      */
-    private final static int MAX_AIBACTERIA_COUNT = 30;
+    private final static int MAX_AIBACTERIA_COUNT = 10;
     /**
      * Скорость ИИБактерии
      */
@@ -175,9 +175,7 @@ public class GameModel implements GameObjectEatenListener {
 
         for (int i = 0; i < MAX_AIBACTERIA_COUNT; i++) {
             int level = (int)( Math.random()*2);
-            System.out.print("L"+level+"\n");
-            AIBacteria aiBacteria = (AIBacteria) aiBacteraiFactory.createGameObject(level);
-            fireLevelUpCount(aiBacteria.sprite(), level); 
+            AIBacteria aiBacteria = (AIBacteria) aiBacteraiFactory.createGameObject(1);
                 
 
             aiBacteria.setSpeed(AI_SPEED);
@@ -200,7 +198,6 @@ public class GameModel implements GameObjectEatenListener {
      * @param mousePosition позиция мыши на поле
      */
     public void update(Point mousePosition) {
-
         for (BacteriaController bacteriaController : bacteriaControllers) {
             bacteriaController.update(mousePosition);
         }
@@ -329,12 +326,70 @@ public class GameModel implements GameObjectEatenListener {
         }
 
         // ... иначе ...
-        else {
+        else if (dish.playerBacteria().level() < dish.aiBacteria(aiBacteria).level()){
 
             // ... бактерию игрока съели, поэтому пускам сигнал завершения игры
 
             fireGameOver();
         }
+    }
+
+    /**
+     * Принимает сигнал BacteriaEaten (одна Бактерия съела другую Бактерию)
+     *
+     * @param bacteria_1 спрайт Бактерии игрока
+     * @param bacteria_2     спрайт ИИБактерии
+     */
+    @Override
+    public void aiBacteriaEaten(Sprite bacteria_1, Sprite bacteria_2) {
+
+        // Если Бактерия игрока съела ИИБактерию (уровень Бактерии игрока больше
+        // уровня ИИБактерии) ...
+        boolean isSpawn = false;
+        
+        if (dish.aiBacteria(bacteria_1).level() > dish.aiBacteria(bacteria_2).level()) {
+
+            dish.aiBacteria(bacteria_1).increaseEatenAICount();
+        
+            // если Бактерия игрока съела достаточно ИИБактерий для перехода на следующий уровень
+            if (dish.aiBacteria(bacteria_1).getEatenAiCount() % AIBACTERIA_EATEN_COUNT_TO_NEXT_LEVEL == 0) {
+
+                // повысить уровень Бактерии игрока и отправить об этом сигнал
+                dish.aiBacteria(bacteria_1).levelUp();
+                fireLevelUp(bacteria_1);
+            }
+
+            // ... если Бактерия игрока съела достаточно ИИБактерий для следующего спавна ...
+            if (dish.aiBacteria(bacteria_1).getEatenAiCount() % EATEN_AIBACTERIA_TO_NEXT_SPAWN == 0) {
+                isSpawn = true;
+            }
+            removeAIFromController(dish.aiBacteria(bacteria_2));
+            dish.removeAIBacteria(bacteria_2);
+        } else if(dish.aiBacteria(bacteria_1).level() < dish.aiBacteria(bacteria_2).level()) {
+            
+            dish.aiBacteria(bacteria_2).increaseEatenAICount();
+            
+            // если Бактерия игрока съела достаточно ИИБактерий для перехода на следующий уровень
+            if (dish.aiBacteria(bacteria_2).getEatenAiCount() % AIBACTERIA_EATEN_COUNT_TO_NEXT_LEVEL == 0) {
+
+                // повысить уровень Бактерии игрока и отправить об этом сигнал
+                dish.aiBacteria(bacteria_2).levelUp();
+                fireLevelUp(bacteria_2);
+            }
+
+            // ... если Бактерия игрока съела достаточно ИИБактерий для следующего спавна ...
+            if (dish.aiBacteria(bacteria_2).getEatenAiCount() % EATEN_AIBACTERIA_TO_NEXT_SPAWN == 0) {
+                isSpawn = true;
+            }
+            removeAIFromController(dish.aiBacteria(bacteria_1));
+            dish.removeAIBacteria(bacteria_1);
+        }
+        
+        if(isSpawn) fireSpawnAI();
+    }
+    
+    void removeAIFromController(AIBacteria _bacteria) {
+        bacteriaControllers.removeIf(controller -> controller.bacteria == _bacteria);
     }
 
     /**

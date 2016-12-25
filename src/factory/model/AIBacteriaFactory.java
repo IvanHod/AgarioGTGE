@@ -42,9 +42,10 @@ public class AIBacteriaFactory extends GameObjectFactory {
         // Генерация случайной позиции ИИБактерии на игровом поле
 
         position = PositionRandomizer.getRandomPosition();
+        //position = new Point( level == 0 ? 100 : 300, level == 0 ? 100 : 300);
         aiBacteriaView.getObjectSprite().setX(position.x);
         aiBacteriaView.getObjectSprite().setY(position.y);
         
-        return new AIBacteria(aiBacteriaView,level);
+        return new AIBacteria(aiBacteriaView, level);
     }
 }
