@@ -5,6 +5,7 @@ import com.golden.gamedev.GameEngine;
 import com.golden.gamedev.GameObject;
 import game.GameView;
 import screen.GameOverScreen;
+import screen.Help;
 import screen.StartScreen;
 
 /**
@@ -23,6 +24,8 @@ public class AgarIOGame extends GameEngine {
         GameObject game = null;
         switch (gameID) {
             case 0:
+                Help help = new Help();
+                help.setVisible(true);
                 game = new StartScreen(this);
                 break;
             case 1:

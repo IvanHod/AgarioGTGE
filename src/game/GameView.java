@@ -46,7 +46,7 @@ public class GameView extends GameObject implements SpawnGameObjectListener, Gam
     /**
      * Размер окна с игрой
      */
-    public static final Dimension GAME_WINDOW = new Dimension(900, 620);
+    public static final Dimension GAME_WINDOW = new Dimension(1280, 700);
 
     /**
      * Начальная позиция игрока
